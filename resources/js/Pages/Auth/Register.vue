@@ -24,90 +24,24 @@ const submit = () => {
     <GuestLayout>
         <Head title="Register" />
 
-        <form @submit.prevent="submit">
-            <div>
-                <InputLabel for="name" value="Name" />
+        <v-card>
+          <v-card-text>
+            <form @submit.prevent="submit">
+              <Input v-model="form.name" label="Name" :error="!!form.errors.name" :error-messages="Array.isArray(form.errors.name) ? form.errors.name : (form.errors.name ? [form.errors.name] : [])" />
 
-                <TextInput
-                    id="name"
-                    type="text"
-                    class="mt-1 block w-full"
-                    v-model="form.name"
-                    required
-                    autofocus
-                    autocomplete="name"
-                />
+              <Input v-model="form.email" label="Email" type="email" :error="!!form.errors.email" :error-messages="Array.isArray(form.errors.email) ? form.errors.email : (form.errors.email ? [form.errors.email] : [])" />
 
-                <InputError class="mt-2" :message="form.errors.name" />
-            </div>
+              <Input v-model="form.password" label="Password" type="password" :error="!!form.errors.password" :error-messages="Array.isArray(form.errors.password) ? form.errors.password : (form.errors.password ? [form.errors.password] : [])" />
 
-            <div class="mt-4">
-                <InputLabel for="email" value="Email" />
+              <Input v-model="form.password_confirmation" label="Confirm Password" type="password" :error="!!form.errors.password_confirmation" :error-messages="Array.isArray(form.errors.password_confirmation) ? form.errors.password_confirmation : (form.errors.password_confirmation ? [form.errors.password_confirmation] : [])" />
 
-                <TextInput
-                    id="email"
-                    type="email"
-                    class="mt-1 block w-full"
-                    v-model="form.email"
-                    required
-                    autocomplete="username"
-                />
+              <div class="mt-4 flex items-center justify-end">
+                <Link :href="route('login')">Already registered?</Link>
 
-                <InputError class="mt-2" :message="form.errors.email" />
-            </div>
-
-            <div class="mt-4">
-                <InputLabel for="password" value="Password" />
-
-                <TextInput
-                    id="password"
-                    type="password"
-                    class="mt-1 block w-full"
-                    v-model="form.password"
-                    required
-                    autocomplete="new-password"
-                />
-
-                <InputError class="mt-2" :message="form.errors.password" />
-            </div>
-
-            <div class="mt-4">
-                <InputLabel
-                    for="password_confirmation"
-                    value="Confirm Password"
-                />
-
-                <TextInput
-                    id="password_confirmation"
-                    type="password"
-                    class="mt-1 block w-full"
-                    v-model="form.password_confirmation"
-                    required
-                    autocomplete="new-password"
-                />
-
-                <InputError
-                    class="mt-2"
-                    :message="form.errors.password_confirmation"
-                />
-            </div>
-
-            <div class="mt-4 flex items-center justify-end">
-                <Link
-                    :href="route('login')"
-                    class="rounded-md text-sm text-gray-600 underline hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-                >
-                    Already registered?
-                </Link>
-
-                <PrimaryButton
-                    class="ms-4"
-                    :class="{ 'opacity-25': form.processing }"
-                    :disabled="form.processing"
-                >
-                    Register
-                </PrimaryButton>
-            </div>
-        </form>
+                <PrimaryButton class="ms-4" :disabled="form.processing">Register</PrimaryButton>
+              </div>
+            </form>
+          </v-card-text>
+        </v-card>
     </GuestLayout>
 </template>

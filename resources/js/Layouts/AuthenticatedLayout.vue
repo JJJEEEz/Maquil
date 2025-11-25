@@ -17,19 +17,20 @@ export default {
     <v-app>
         <v-navigation-drawer v-model="drawer" app permanent>
             <div class="pa-4">
-                <Link :href="route('dashboard')">
+                <Link :href="route('welcome')">
                     <ApplicationLogo class="h-10 w-auto" />
                 </Link>
             </div>
             <v-list>
-                <v-list-item>
-                    <Link :href="route('dashboard')">Dashboard</Link>
-                </v-list-item>
+                <v-list-subheader>Panel de Administración</v-list-subheader>
                 <v-list-item>
                     <Link :href="route('admin.users.index')">Usuarios</Link>
                 </v-list-item>
                 <v-list-item>
                     <Link :href="route('admin.roles.index')">Roles</Link>
+                </v-list-item>
+                <v-list-item>
+                    <Link :href="route('admin.dashboard.index')">Estadisticas</Link>
                 </v-list-item>
             </v-list>
         </v-navigation-drawer>

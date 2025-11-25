@@ -25,13 +25,17 @@ const form = useForm({
 const submit = () => {
     form.post(route('login'), {
         onFinish: () => form.reset('password'),
+        onError: (errors) => {
+            // Log errors to the browser console for debugging
+            console.log('Inertia form errors:', errors);
+        },
     });
 };
 </script>
 
 <template>
     <GuestLayout>
-        <Head title="Log in" />
+        <Head title="Iniciar sesión" />
 
         <div v-if="status" class="mb-4 text-sm font-medium text-green-600">
             {{ status }}
@@ -39,7 +43,7 @@ const submit = () => {
 
         <form @submit.prevent="submit">
             <div>
-                <InputLabel for="email" value="Email" />
+                <InputLabel for="Correo electronico" value="Correo electronico" />
 
                 <TextInput
                     id="email"
@@ -49,13 +53,12 @@ const submit = () => {
                     required
                     autofocus
                     autocomplete="username"
+                    :error-messages="form.errors.email ? (Array.isArray(form.errors.email) ? form.errors.email : [form.errors.email]) : []"
                 />
-
-                <InputError class="mt-2" :message="form.errors.email" />
             </div>
 
             <div class="mt-4">
-                <InputLabel for="password" value="Password" />
+                <InputLabel for="contraseña" value="Contraseña" />
 
                 <TextInput
                     id="password"
@@ -64,35 +67,29 @@ const submit = () => {
                     v-model="form.password"
                     required
                     autocomplete="current-password"
+                    :error="!!form.errors.password"
+                    :error-messages="form.errors.password ? (Array.isArray(form.errors.password) ? form.errors.password : [form.errors.password]) : []"
                 />
-
-                <InputError class="mt-2" :message="form.errors.password" />
             </div>
 
-            <div class="mt-4 block">
-                <label class="flex items-center">
-                    <Checkbox name="remember" v-model:checked="form.remember" />
-                    <span class="ms-2 text-sm text-gray-600"
-                        >Remember me</span
-                    >
-                </label>
-            </div>
+            <!-- <div class="mt-4 block">
+                <Checkbox name="remember" v-model:checked="form.remember" label="Recuérdame" />
+            </div> -->
 
-            <div class="mt-4 flex items-center justify-end">
-                <Link
+            <div class="mt-4 flex items-center justify-center">
+                <!-- <Link
                     v-if="canResetPassword"
                     :href="route('password.request')"
                     class="rounded-md text-sm text-gray-600 underline hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
                 >
-                    Forgot your password?
-                </Link>
-
+                    ¿Olvidaste tu contraseña?
+                </Link> -->
                 <PrimaryButton
                     class="ms-4"
                     :class="{ 'opacity-25': form.processing }"
                     :disabled="form.processing"
                 >
-                    Log in
+                    Iniciar sesión
                 </PrimaryButton>
             </div>
         </form>

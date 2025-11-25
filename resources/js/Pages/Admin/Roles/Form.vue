@@ -1,19 +1,26 @@
 <template>
-  <div class="p-6">
-    <h1 class="text-lg font-semibold mb-4">{{ isEdit ? 'Editar rol' : 'Crear rol' }}</h1>
-    <form @submit.prevent="submit">
-      <Input v-model="form.name" label="Nombre" :error="errors.name" />
-      <div class="mt-4">
-        <Button type="submit" :disabled="processing">Guardar</Button>
-      </div>
-    </form>
-  </div>
+  <v-card class="p-6">
+    <v-card-title>
+      <h1 class="text-lg font-semibold mb-0">{{ isEdit ? 'Editar rol' : 'Crear rol' }}</h1>
+    </v-card-title>
+
+    <v-card-text>
+      <form @submit.prevent="submit">
+        <Input v-model="form.name" label="Nombre" :error="!!errors.name" :error-messages="toArray(errors.name)" />
+
+        <v-card-actions class="mt-4">
+          <Button type="submit" :disabled="processing">Guardar</Button>
+        </v-card-actions>
+      </form>
+    </v-card-text>
+  </v-card>
 </template>
 
 <script setup>
 import { useForm } from '@inertiajs/vue3';
 import Input from '@/Components/UI/Input.vue';
 import Button from '@/Components/UI/Button.vue';
+import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 
 const props = defineProps({ role: Object });
 
@@ -33,4 +40,13 @@ function submit() {
     form.post(route('admin.roles.store'));
   }
 }
+
+function toArray(val) {
+  if (!val) return [];
+  return Array.isArray(val) ? val : [val];
+}
+</script>
+
+<script>
+export default { layout: AuthenticatedLayout };
 </script>

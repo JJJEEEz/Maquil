@@ -1,22 +1,31 @@
-<script setup>
+<script>
 import ApplicationLogo from '@/Components/ApplicationLogo.vue';
 import { Link } from '@inertiajs/vue3';
+
+export default {
+    components: { ApplicationLogo, Link },
+};
 </script>
 
 <template>
-    <div
-        class="flex min-h-screen flex-col items-center bg-gray-100 pt-6 sm:justify-center sm:pt-0"
-    >
-        <div>
-            <Link href="/">
-                <ApplicationLogo class="h-20 w-20 fill-current text-gray-500" />
-            </Link>
-        </div>
-
-        <div
-            class="mt-6 w-full overflow-hidden bg-white px-6 py-4 shadow-md sm:max-w-md sm:rounded-lg"
-        >
-            <slot />
-        </div>
-    </div>
+    <v-app>
+        <v-main>
+            <v-container fluid class="fill-height">
+                <v-row align="center" justify="center">
+                    <v-col cols="12" sm="8" md="4">
+                        <v-card elevation="12" rounded style="border-radius:12px;">
+                            <div class="d-flex justify-center mb-6 mt-6">
+                                <Link href="/">
+                                    <ApplicationLogo class="h-20 w-20 fill-current" color="primary" />
+                                </Link>
+                            </div>
+                            <v-card-text>
+                                <slot />
+                            </v-card-text>
+                        </v-card>
+                    </v-col>
+                </v-row>
+            </v-container>
+        </v-main>
+    </v-app>
 </template>

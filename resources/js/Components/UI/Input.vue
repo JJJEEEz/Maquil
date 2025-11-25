@@ -1,21 +1,43 @@
 <template>
   <div>
-    <label v-if="label" class="block text-sm font-medium text-gray-700">{{ label }}</label>
-    <input
+    <v-text-field
+      v-model="internalValue"
+      :label="label"
       :type="type"
-      :value="modelValue"
-      @input="$emit('update:modelValue', $event.target.value)"
-      class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+      :error="!!error"
+      :error-messages="error ? [error] : []"
+      density="comfortable"
+      color="primary"
+      variant="outlined"
+      class="w-full"
+      @input="onInput"
     />
-    <p v-if="error" class="text-red-600 text-sm mt-1">{{ error }}</p>
   </div>
 </template>
 
 <script setup>
-defineProps({
+import { computed } from 'vue';
+
+const props = defineProps({
   modelValue: [String, Number],
   label: String,
   type: { type: String, default: 'text' },
   error: String,
 });
+
+const emit = defineEmits(['update:modelValue']);
+
+const internalValue = computed({
+  get() {
+    return props.modelValue;
+  },
+  set(val) {
+    emit('update:modelValue', val);
+  },
+});
+
+function onInput(v) {
+  // v-text-field emits the value directly
+  emit('update:modelValue', v);
+}
 </script>

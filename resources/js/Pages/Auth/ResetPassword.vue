@@ -35,67 +35,20 @@ const submit = () => {
     <GuestLayout>
         <Head title="Reset Password" />
 
-        <form @submit.prevent="submit">
-            <div>
-                <InputLabel for="email" value="Email" />
+        <v-card>
+          <v-card-text>
+            <form @submit.prevent="submit">
+              <Input v-model="form.email" label="Email" type="email" :error="!!form.errors.email" :error-messages="Array.isArray(form.errors.email) ? form.errors.email : (form.errors.email ? [form.errors.email] : [])" />
 
-                <TextInput
-                    id="email"
-                    type="email"
-                    class="mt-1 block w-full"
-                    v-model="form.email"
-                    required
-                    autofocus
-                    autocomplete="username"
-                />
+              <Input v-model="form.password" label="Password" type="password" :error="!!form.errors.password" :error-messages="Array.isArray(form.errors.password) ? form.errors.password : (form.errors.password ? [form.errors.password] : [])" />
 
-                <InputError class="mt-2" :message="form.errors.email" />
-            </div>
+              <Input v-model="form.password_confirmation" label="Confirm Password" type="password" :error="!!form.errors.password_confirmation" :error-messages="Array.isArray(form.errors.password_confirmation) ? form.errors.password_confirmation : (form.errors.password_confirmation ? [form.errors.password_confirmation] : [])" />
 
-            <div class="mt-4">
-                <InputLabel for="password" value="Password" />
-
-                <TextInput
-                    id="password"
-                    type="password"
-                    class="mt-1 block w-full"
-                    v-model="form.password"
-                    required
-                    autocomplete="new-password"
-                />
-
-                <InputError class="mt-2" :message="form.errors.password" />
-            </div>
-
-            <div class="mt-4">
-                <InputLabel
-                    for="password_confirmation"
-                    value="Confirm Password"
-                />
-
-                <TextInput
-                    id="password_confirmation"
-                    type="password"
-                    class="mt-1 block w-full"
-                    v-model="form.password_confirmation"
-                    required
-                    autocomplete="new-password"
-                />
-
-                <InputError
-                    class="mt-2"
-                    :message="form.errors.password_confirmation"
-                />
-            </div>
-
-            <div class="mt-4 flex items-center justify-end">
-                <PrimaryButton
-                    :class="{ 'opacity-25': form.processing }"
-                    :disabled="form.processing"
-                >
-                    Reset Password
-                </PrimaryButton>
-            </div>
-        </form>
+              <div class="mt-4 flex items-center justify-end">
+                <PrimaryButton :disabled="form.processing">Reset Password</PrimaryButton>
+              </div>
+            </form>
+          </v-card-text>
+        </v-card>
     </GuestLayout>
 </template>
