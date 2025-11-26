@@ -7,7 +7,7 @@
       :error="!!error"
       :error-messages="error ? [error] : []"
       density="comfortable"
-      color="primary"
+      color="on-surface"
       variant="outlined"
       class="w-full"
     />

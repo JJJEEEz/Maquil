@@ -35,41 +35,58 @@ createInertiaApp({
                 defaultTheme: 'light',
                 themes: {
                     light: {
+                        dark: false, // Indica que este es el tema claro
                         colors: {
-                            primary: '#4F46E5',   // indigo-600
-                            secondary: '#06B6D4', // cyan-500
-                            tertiary: '#7C3AED',  // violet-600 (tertiary)
-                            success: '#10B981',   // emerald-500
-                            info: '#0EA5E9',      // sky-500
-                            warning: '#F59E0B',   // amber-500
-                            error: '#EF4444',     // red-500
-                            background: '#FFFFFF',
-                            surface: '#FFFFFF',
-                            'on-surface': '#111827',
-                            'on-primary': '#FFFFFF',
-                            'on-tertiary': '#FFFFFF',
-                        },
+                            // Colores Principales Lujo Dorado
+                            primary: '#d1ac3a',   // Oro Viejo (El foco principal en ambas versiones)
+                            secondary: '#021561ff', 
+                            tertiary: '#00A36C',  // Verde Esmeralda (Acento 2)
+
+                            // Colores Funcionales (Alto contraste sobre fondo CLARO)
+                            success: '#10B981',   // Éxito
+                            info: '#0EA5E9',      // Información
+                            warning: '#F59E0B',   // Advertencia (Tono original)
+                            error: '#EF4444',     // Error
+
+                            // Fondos y Superficies (Tema CLARO)
+                            background: '#FFFFFF', // Fondo principal BLANCO
+                            surface: '#F5F5F5',    // Superficie/Tarjetas (Gris claro)
+                            // Colores de Texto (On-Colors)
+                            'on-surface': '#111827',  // Texto sobre fondo/superficie CLARO (Negro oscuro)
+                            'on-primary': '#111827',  // Texto sobre Dorado (Negro oscuro para mayor legibilidad)
+                            'on-tertiary': '#FFFFFF'  // Texto sobre Esmeralda (Blanco)
+                        }
                     },
+
+                    // === MODO OSCURO (DARK) ===
                     dark: {
-                        dark: true,
+                        dark: true, // Indica que este es el tema oscuro
                         colors: {
-                            primary: '#6366F1',
-                            secondary: '#0891B2',
-                            tertiary: '#7C3AED',
-                            success: '#10B981',
-                            info: '#0EA5E9',
-                            warning: '#F59E0B',
-                            error: '#EF4444',
-                            background: '#121212',
-                            surface: '#1F1F1F',
-                            'on-surface': '#FFFFFF',
-                            'on-primary': '#FFFFFF',
-                            'on-tertiary': '#FFFFFF',
-                        },
-                    },
+                            // Colores Principales Lujo Dorado (Se mantienen los mismos tonos vibrantes)
+                            primary: '#FFD700',   // Oro Viejo (El foco principal en ambas versiones)
+                            secondary: '#546090ff', // Borgoña Profundo (Acento 1)
+                            tertiary: '#00A36C',  // Verde Esmeralda (Acento 2)
+
+                            // Colores Funcionales (Se mantienen los tonos vibrantes para contraste)
+                            success: '#10B981',   // Éxito
+                            info: '#0EA5E9',      // Información
+                            warning: '#FFC107',   // Advertencia (Más vibrante sobre fondo oscuro)
+                            error: '#EF4444',     // Error
+
+                            // Fondos y Superficies (Tema OSCURO - El modo que creamos antes)
+                            background: '#121212', // Negro Azabache (Fondo principal)
+                            surface: '#1D1D1D',    // Superficie/Tarjetas
+
+                            // Colores de Texto (On-Colors)
+                            'on-surface': '#F5F5F5',  // Texto sobre fondo/superficie OSCURO (Blanco roto)
+                            'on-primary': '#111827',  // Texto sobre Dorado (Negro oscuro para legibilidad)
+                            'on-tertiary': '#F5F5F5'  // Texto sobre Esmeralda (Blanco roto)
+                        }
+                    }
+                }
                 },
             },
-        });
+        );
 
         const app = createApp({ render: () => h(App, props) });
 

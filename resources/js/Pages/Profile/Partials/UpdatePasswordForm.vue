@@ -37,11 +37,11 @@ function toArray(val) {
 </script>
 
 <template>
-    <v-card>
+    <v-card color="surface">
         <v-card-title>
             <div>
-                <h2 class="text-lg font-medium">Actualizar contraseña</h2>
-                <p class="text-sm">Asegúrate de que tu cuenta use una contraseña larga y segura.</p>
+                <h2 class="text-lg font-medium" style="color: var(--v-theme-on-surface)">Actualizar contraseña</h2>
+                <p class="text-sm" style="color: var(--v-theme-on-surface)">Asegúrate de que tu cuenta use una contraseña larga y segura.</p>
             </div>
         </v-card-title>
 
@@ -58,7 +58,7 @@ function toArray(val) {
                     <PrimaryButton :disabled="form.processing">Guardar</PrimaryButton>
 
                     <Transition>
-                        <p v-if="form.recentlySuccessful" class="text-sm text-muted">Guardado.</p>
+                        <p v-if="form.recentlySuccessful" class="text-sm" style="color: var(--v-theme-on-surface); opacity:.85">Guardado.</p>
                     </Transition>
                 </v-card-actions>
             </form>

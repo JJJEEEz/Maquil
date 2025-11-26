@@ -13,13 +13,13 @@ export default {
             <v-container fluid class="fill-height">
                 <v-row align="center" justify="center">
                     <v-col cols="12" sm="8" md="4">
-                        <v-card elevation="12" rounded style="border-radius:12px;">
+                        <v-card elevation="12" rounded style="border-radius:12px;" color="surface">
                             <div class="d-flex justify-center mb-6 mt-6">
                                 <Link href="/">
-                                    <ApplicationLogo class="h-20 w-20 fill-current" color="primary" />
+                                    <ApplicationLogo class="h-20 w-20" color="on-surface" />
                                 </Link>
                             </div>
-                            <v-card-text>
+                            <v-card-text :style="{ color: 'var(--v-theme-on-surface)' }">
                                 <slot />
                             </v-card-text>
                         </v-card>

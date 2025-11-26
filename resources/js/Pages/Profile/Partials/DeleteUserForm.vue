@@ -42,11 +42,11 @@ function toArray(val) {
 </script>
 
 <template>
-    <v-card>
+    <v-card color="surface">
         <v-card-title>
             <div>
-                <h2 class="text-lg font-medium">Eliminar cuenta</h2>
-                    <p class="text-sm">Una vez eliminada tu cuenta, todos sus recursos y datos serán borrados permanentemente. Antes de eliminarla, descarga cualquier información que desees conservar.</p>
+                <h2 class="text-lg font-medium" style="color: var(--v-theme-on-surface)">Eliminar cuenta</h2>
+                    <p class="text-sm" style="color: var(--v-theme-on-surface)">Una vez eliminada tu cuenta, todos sus recursos y datos serán borrados permanentemente. Antes de eliminarla, descarga cualquier información que desees conservar.</p>
             </div>
         </v-card-title>
 
@@ -55,9 +55,9 @@ function toArray(val) {
 
             <Modal :show="confirmingUserDeletion" @close="closeModal">
                 <div class="p-6">
-                    <h2 class="text-lg font-medium">¿Estás seguro de que deseas eliminar tu cuenta?</h2>
+                    <h2 class="text-lg font-medium" style="color: var(--v-theme-on-surface)">¿Estás seguro de que deseas eliminar tu cuenta?</h2>
 
-                    <p class="mt-1 text-sm text-gray-600">Introduce tu contraseña para confirmar que deseas eliminar tu cuenta de forma permanente.</p>
+                    <p class="mt-1 text-sm" style="color: var(--v-theme-on-surface); opacity:.9">Introduce tu contraseña para confirmar que deseas eliminar tu cuenta de forma permanente.</p>
 
                     <div class="mt-6">
                         <Input v-model="form.password" label="Contraseña" type="password" ref="passwordInput" :error="!!form.errors.password" :error-messages="toArray(form.errors.password)" @keyup.enter="deleteUser" />

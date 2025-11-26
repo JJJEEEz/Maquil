@@ -26,11 +26,11 @@ function toArray(val) {
 </script>
 
 <template>
-    <v-card>
+    <v-card color="surface">
         <v-card-title>
             <div>
-                    <h2 class="text-lg font-medium">Información del perfil</h2>
-                    <p class="text-sm">Actualiza la información de tu cuenta y tu dirección de correo electrónico.</p>
+                <h2 class="text-lg font-medium" style="color: var(--v-theme-on-surface)">Información del perfil</h2>
+                <p class="text-sm" style="color: var(--v-theme-on-surface)">Actualiza la información de tu cuenta y tu dirección de correo electrónico.</p>
             </div>
         </v-card-title>
 
@@ -41,12 +41,12 @@ function toArray(val) {
                 <Input v-model="form.email" label="Correo electrónico" type="email" :error="!!form.errors.email" :error-messages="toArray(form.errors.email)" />
 
                 <div v-if="mustVerifyEmail && user.email_verified_at === null" class="my-2">
-                    <p class="text-sm">Tu dirección de correo electrónico no está verificada.</p>
+                    <p class="text-sm" style="color: var(--v-theme-on-surface)">Tu dirección de correo electrónico no está verificada.</p>
                     <Link :href="route('verification.send')" method="post" as="button">
-                        <v-btn text>Haz clic aquí para reenviar el correo de verificación.</v-btn>
+                        <v-btn text color="primary">Haz clic aquí para reenviar el correo de verificación.</v-btn>
                     </Link>
 
-                    <div v-show="status === 'verification-link-sent'" class="mt-2 text-sm text-success">
+                    <div v-show="status === 'verification-link-sent'" class="mt-2 text-sm" style="color: var(--v-theme-success)">
                         Se ha enviado un nuevo enlace de verificación a tu correo electrónico.
                     </div>
                 </div>
@@ -55,7 +55,7 @@ function toArray(val) {
                     <PrimaryButton :disabled="form.processing">Guardar</PrimaryButton>
 
                     <Transition>
-                        <p v-if="form.recentlySuccessful" class="text-sm text-muted">Guardado.</p>
+                        <p v-if="form.recentlySuccessful" class="text-sm" style="color: var(--v-theme-on-surface); opacity: .85">Guardado.</p>
                     </Transition>
                 </v-card-actions>
             </form>
