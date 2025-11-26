@@ -45,28 +45,28 @@ function toArray(val) {
     <v-card>
         <v-card-title>
             <div>
-                <h2 class="text-lg font-medium">Delete Account</h2>
-                <p class="text-sm">Once your account is deleted, all of its resources and data will be permanently deleted. Before deleting your account, please download any data or information that you wish to retain.</p>
+                <h2 class="text-lg font-medium">Eliminar cuenta</h2>
+                    <p class="text-sm">Una vez eliminada tu cuenta, todos sus recursos y datos serán borrados permanentemente. Antes de eliminarla, descarga cualquier información que desees conservar.</p>
             </div>
         </v-card-title>
 
         <v-card-text>
-            <DangerButton @click="confirmUserDeletion">Delete Account</DangerButton>
+            <DangerButton @click="confirmUserDeletion">Eliminar cuenta</DangerButton>
 
             <Modal :show="confirmingUserDeletion" @close="closeModal">
                 <div class="p-6">
-                    <h2 class="text-lg font-medium">Are you sure you want to delete your account?</h2>
+                    <h2 class="text-lg font-medium">¿Estás seguro de que deseas eliminar tu cuenta?</h2>
 
-                    <p class="mt-1 text-sm text-gray-600">Please enter your password to confirm you would like to permanently delete your account.</p>
+                    <p class="mt-1 text-sm text-gray-600">Introduce tu contraseña para confirmar que deseas eliminar tu cuenta de forma permanente.</p>
 
                     <div class="mt-6">
-                        <Input v-model="form.password" label="Password" type="password" ref="passwordInput" :error="!!form.errors.password" :error-messages="toArray(form.errors.password)" @keyup.enter="deleteUser" />
+                        <Input v-model="form.password" label="Contraseña" type="password" ref="passwordInput" :error="!!form.errors.password" :error-messages="toArray(form.errors.password)" @keyup.enter="deleteUser" />
                     </div>
 
                     <div class="mt-6 flex justify-end">
-                        <SecondaryButton @click="closeModal">Cancel</SecondaryButton>
+                        <SecondaryButton @click="closeModal">Cancelar</SecondaryButton>
 
-                        <DangerButton class="ms-3" :disabled="form.processing" @click="deleteUser">Delete Account</DangerButton>
+                        <DangerButton class="ms-3" :disabled="form.processing" @click="deleteUser">Eliminar cuenta</DangerButton>
                     </div>
                 </div>
             </Modal>

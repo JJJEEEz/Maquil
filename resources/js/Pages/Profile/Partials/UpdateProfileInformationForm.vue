@@ -29,33 +29,33 @@ function toArray(val) {
     <v-card>
         <v-card-title>
             <div>
-                <h2 class="text-lg font-medium">Profile Information</h2>
-                <p class="text-sm">Update your account's profile information and email address.</p>
+                    <h2 class="text-lg font-medium">Información del perfil</h2>
+                    <p class="text-sm">Actualiza la información de tu cuenta y tu dirección de correo electrónico.</p>
             </div>
         </v-card-title>
 
         <v-card-text>
             <form @submit.prevent="form.patch(route('profile.update'))">
-                <Input v-model="form.name" label="Name" :error="!!form.errors.name" :error-messages="toArray(form.errors.name)" />
+                <Input v-model="form.name" label="Nombre" :error="!!form.errors.name" :error-messages="toArray(form.errors.name)" />
 
-                <Input v-model="form.email" label="Email" type="email" :error="!!form.errors.email" :error-messages="toArray(form.errors.email)" />
+                <Input v-model="form.email" label="Correo electrónico" type="email" :error="!!form.errors.email" :error-messages="toArray(form.errors.email)" />
 
                 <div v-if="mustVerifyEmail && user.email_verified_at === null" class="my-2">
-                    <p class="text-sm">Your email address is unverified.</p>
+                    <p class="text-sm">Tu dirección de correo electrónico no está verificada.</p>
                     <Link :href="route('verification.send')" method="post" as="button">
-                        <v-btn text>Click here to re-send the verification email.</v-btn>
+                        <v-btn text>Haz clic aquí para reenviar el correo de verificación.</v-btn>
                     </Link>
 
                     <div v-show="status === 'verification-link-sent'" class="mt-2 text-sm text-success">
-                        A new verification link has been sent to your email address.
+                        Se ha enviado un nuevo enlace de verificación a tu correo electrónico.
                     </div>
                 </div>
 
                 <v-card-actions class="mt-4">
-                    <PrimaryButton :disabled="form.processing">Save</PrimaryButton>
+                    <PrimaryButton :disabled="form.processing">Guardar</PrimaryButton>
 
                     <Transition>
-                        <p v-if="form.recentlySuccessful" class="text-sm text-muted">Saved.</p>
+                        <p v-if="form.recentlySuccessful" class="text-sm text-muted">Guardado.</p>
                     </Transition>
                 </v-card-actions>
             </form>

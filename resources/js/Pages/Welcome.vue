@@ -4,8 +4,6 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head } from '@inertiajs/vue3';</script>
 
 <template>
-    <Head title="Welcome" />
-
     <AuthenticatedLayout>
         <div class="dashboard-logo-wrapper">
             <ApplicationLogo class="dashboard-logo" />

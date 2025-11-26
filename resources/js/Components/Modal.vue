@@ -115,9 +115,37 @@ const maxWidthClass = computed(() => {
                     class="mb-6 transform overflow-hidden rounded-lg bg-white shadow-xl transition-all sm:mx-auto sm:w-full"
                     :class="maxWidthClass"
                 >
-                    <slot v-if="showSlot" />
+                    <!-- Scrollable content area: restrict max height and allow internal scrolling -->
+                    <div class="modal-inner" style="max-height: calc(100vh - 80px); overflow:auto; display:flex; flex-direction:column;">
+                        <div class="modal-body" style="flex:1 1 auto; overflow:auto;">
+                          <slot v-if="showSlot" />
+                        </div>
+                        <div class="modal-actions-wrapper" style="flex:0 0 auto;">
+                          <slot name="footer" />
+                        </div>
+                    </div>
                 </div>
             </Transition>
         </div>
     </dialog>
 </template>
+
+<style scoped>
+.modal-inner {
+    /* ensure the inner area is the scrolling viewport for slot content */
+    position: relative;
+    display: flex;
+    flex-direction: column;
+}
+.modal-body {
+    flex: 1 1 auto;
+    overflow: auto;
+}
+.modal-actions-wrapper {
+    flex: 0 0 auto;
+    background: white;
+    border-top: 1px solid rgba(0,0,0,0.06);
+    padding-top: 12px;
+    padding-bottom: 12px;
+}
+</style>

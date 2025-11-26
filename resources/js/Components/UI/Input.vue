@@ -10,7 +10,6 @@
       color="primary"
       variant="outlined"
       class="w-full"
-      @input="onInput"
     />
   </div>
 </template>
@@ -36,8 +35,5 @@ const internalValue = computed({
   },
 });
 
-function onInput(v) {
-  // v-text-field emits the value directly
-  emit('update:modelValue', v);
-}
+// Rely on computed setter to emit `update:modelValue`.
 </script>

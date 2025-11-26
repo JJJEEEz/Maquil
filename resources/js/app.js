@@ -7,6 +7,7 @@ import '@mdi/font/css/materialdesignicons.min.css';
 import { createVuetify } from 'vuetify';
 import * as components from 'vuetify/components';
 import * as directives from 'vuetify/directives';
+import { es } from 'vuetify/locale';
 
 import { createInertiaApp } from '@inertiajs/vue3';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
@@ -26,6 +27,10 @@ createInertiaApp({
         const vuetify = createVuetify({
             components,
             directives,
+            locale: {
+                locale: 'es',
+                messages: { es },
+            },
             theme: {
                 defaultTheme: 'light',
                 themes: {
@@ -40,6 +45,24 @@ createInertiaApp({
                             error: '#EF4444',     // red-500
                             background: '#FFFFFF',
                             surface: '#FFFFFF',
+                            'on-surface': '#111827',
+                            'on-primary': '#FFFFFF',
+                            'on-tertiary': '#FFFFFF',
+                        },
+                    },
+                    dark: {
+                        dark: true,
+                        colors: {
+                            primary: '#6366F1',
+                            secondary: '#0891B2',
+                            tertiary: '#7C3AED',
+                            success: '#10B981',
+                            info: '#0EA5E9',
+                            warning: '#F59E0B',
+                            error: '#EF4444',
+                            background: '#121212',
+                            surface: '#1F1F1F',
+                            'on-surface': '#FFFFFF',
                             'on-primary': '#FFFFFF',
                             'on-tertiary': '#FFFFFF',
                         },
@@ -53,6 +76,11 @@ createInertiaApp({
         app.use(plugin)
             .use(ZiggyVue)
             .use(vuetify);
+
+        // expose vuetify to window so components can toggle theme at runtime
+        try {
+            window.vuetify = vuetify;
+        } catch (e) {}
 
         // Auto-register all components in resources/js/Components as global components
         const globalComponents = import.meta.glob('./Components/**/*.vue', { eager: true });
