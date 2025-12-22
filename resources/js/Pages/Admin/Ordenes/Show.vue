@@ -17,20 +17,12 @@ const orden = computed(() => props.orden);
 const ordenLocal = ref(orden.value ? JSON.parse(JSON.stringify(orden.value)) : null);
 // table headers for lotes (Vuetify 3 expects `title` and `key`)
 const loteHeaders = [
-  { title: 'Lote', key: 'id' },
-      {
-      title: 'Fechas',
-      align: 'center',
-      children: [
-        { title: 'Inicio esperada', key: 'expected_started_at' },
-        { title: 'Fin esperada', key: 'expected_ended_at' },
-        { title: 'Inicio real', key: 'started_at' },
-        { title: 'Fin real', key: 'ended_at' },
-      ],
-    },
-  { title: 'Estatus', key: 'status' },
-  { title: 'Cantidad', key: 'quantity' },
-  { title: 'Acciones', key: 'actions', sortable: false },
+  { title: 'ID', key: 'id', width: 60, align: 'center' },
+  { title: 'Fecha', key: 'fecha' },
+  { title: 'Estado', key: 'estado_trabajo' },
+  { title: 'Prendas', key: 'total_prendas_terminadas', align: 'right' },
+  { title: 'Mermas', key: 'total_mermas', align: 'right' },
+  { title: 'Acciones', key: 'actions', sortable: false, width: 200, align: 'center' },
 ];
 
 
@@ -61,17 +53,20 @@ const authPermissions = props.authPermissions || [];
 const canCreateLote = authPermissions.includes('lotes.create');
 const canEditLote = authPermissions.includes('lotes.edit');
 const canDeleteLote = authPermissions.includes('lotes.delete');
+const canViewLote = authPermissions.includes('lotes.view');
+const canRegistrarProcesos = authPermissions.includes('procesos.registrar');
 
 const loteForm = reactive({
-  started_at: null,
-  ended_at: null,
-  expected_started_at: null,
-  expected_ended_at: null,
-  status: 'Pendiente',
-  quantity: 0,
+  fecha: null,
+  estado_trabajo: 'no_trabajado',
+  razon_interrupcion: null,
 });
 
-const statusOptions = ['Pendiente', 'En progreso', 'Completado'];
+const estadoTrabajoOptions = [
+  { title: 'No trabajado', value: 'no_trabajado' },
+  { title: 'Trabajado', value: 'trabajado' },
+  { title: 'Interrumpido', value: 'interrumpido' },
+];
 const statusProcessing = ref({});
 
 function updateLoteStatus(lote, newStatus) {
@@ -107,23 +102,22 @@ function updateLoteStatus(lote, newStatus) {
 
 function openCreateLote() {
   editingLote.value = null;
-  loteForm.started_at = null;
-  loteForm.ended_at = null;
-  loteForm.expected_started_at = null;
-  loteForm.expected_ended_at = null;
-  loteForm.status = 'Pendiente';
-  loteForm.quantity = 0;
+  // Set today's date by default
+  const today = new Date();
+  const year = today.getFullYear();
+  const month = String(today.getMonth() + 1).padStart(2, '0');
+  const day = String(today.getDate()).padStart(2, '0');
+  loteForm.fecha = `${year}-${month}-${day}`;
+  loteForm.estado_trabajo = 'no_trabajado';
+  loteForm.razon_interrupcion = null;
   loteModalOpen.value = true;
 }
 
 function openEditLote(lote) {
   editingLote.value = lote;
-  loteForm.started_at = lote.started_at ?? null;
-  loteForm.ended_at = lote.ended_at ?? null;
-  loteForm.expected_started_at = lote.expected_started_at ?? null;
-  loteForm.expected_ended_at = lote.expected_ended_at ?? null;
-  loteForm.status = lote.status ?? 'Pendiente';
-  loteForm.quantity = lote.quantity ?? 0;
+  loteForm.fecha = lote.fecha ?? null;
+  loteForm.estado_trabajo = lote.estado_trabajo ?? 'no_trabajado';
+  loteForm.razon_interrupcion = lote.razon_interrupcion ?? null;
   loteModalOpen.value = true;
 }
 
@@ -134,11 +128,9 @@ function closeLoteModal() {
 function submitLote() {
   if (!orden.value || !orden.value.id) return;
   const payload = {
-    started_at: loteForm.started_at || null,
-    ended_at: loteForm.ended_at || null,
-    expected_started_at: loteForm.expected_started_at || null,
-    expected_ended_at: loteForm.expected_ended_at || null,
-    quantity: loteForm.quantity,
+    fecha: loteForm.fecha || null,
+    estado_trabajo: loteForm.estado_trabajo || 'no_trabajado',
+    razon_interrupcion: loteForm.razon_interrupcion || null,
   };
 
   processing.value = true;
@@ -212,6 +204,27 @@ function formatDateLocal(input) {
   return String(input);
 }
 
+function formatEstadoTrabajo(estado) {
+  const map = {
+    trabajado: 'Trabajado',
+    no_trabajado: 'No trabajado',
+    interrumpido: 'Interrumpido',
+  };
+  return map[estado] || estado;
+}
+
+function getEstadoColor(estado) {
+  switch (estado) {
+    case 'trabajado':
+      return 'success';
+    case 'interrumpido':
+      return 'error';
+    case 'no_trabajado':
+    default:
+      return 'grey';
+  }
+}
+
 // expose errors from server-side validation
 const page = usePage();
 const localErrors = ref({});
@@ -256,14 +269,26 @@ const errors = computed(() => {
               <div class="text-center pa-6">No hay lotes disponibles para esta orden.</div>
             </template>
             <template #item.id="{ item }">{{ item.id }}</template>
-            <template #item.expected_started_at="{ item }">{{ item.expected_started_at ? formatDateLocal(item.expected_started_at) : '-' }}</template>
-            <template #item.expected_ended_at="{ item }">{{ item.expected_ended_at ? formatDateLocal(item.expected_ended_at) : '-' }}</template>
-            <template #item.started_at="{ item }">{{ item.started_at ? formatDateLocal(item.started_at) : '-' }}</template>
-            <template #item.ended_at="{ item }">{{ item.ended_at ? formatDateLocal(item.ended_at) : '-' }}</template>
-            <template #item.status="{ item }">{{ loteStatus(item) }}</template>
-            <template #item.quantity="{ item }">{{ item.quantity }}</template>
+            <template #item.fecha="{ item }">{{ item.fecha ? formatDateLocal(item.fecha) : '-' }}</template>
+            <template #item.estado_trabajo="{ item }">
+              <v-chip :color="getEstadoColor(item.estado_trabajo)" variant="tonal" size="small">
+                {{ formatEstadoTrabajo(item.estado_trabajo) }}
+              </v-chip>
+            </template>
+            <template #item.total_prendas_terminadas="{ item }">{{ item.total_prendas_terminadas || 0 }}</template>
+            <template #item.total_mermas="{ item }">{{ item.total_mermas || 0 }}</template>
             <template #item.actions="{ item }">
               <div style="display:flex; gap:6px; align-items:center">
+                  <Link v-if="canViewLote" :href="route('admin.lotes.show', item.id)">
+                    <v-btn icon color="info" size="small" title="Ver Detalle">
+                      <v-icon>mdi-eye</v-icon>
+                    </v-btn>
+                  </Link>
+                  <Link v-if="canRegistrarProcesos" :href="route('operador.lotes.dashboard', item.id)">
+                    <v-btn icon color="secondary" size="small" title="Dashboard">
+                      <v-icon>mdi-chart-box</v-icon>
+                    </v-btn>
+                  </Link>
                   <v-btn v-if="canEditLote" icon color="primary" size="small" @click.prevent="openEditLote(item)">
                     <v-icon>mdi-pencil</v-icon>
                   </v-btn>
@@ -279,45 +304,35 @@ const errors = computed(() => {
     <Modal :show="loteModalOpen" @close="closeLoteModal">
       <div class="p-6">
         <h3 class="text-lg font-semibold mb-4">{{ editingLote ? 'Editar Lote' : 'Crear Lote' }}</h3>
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div v-if="editingLote">
-            <label class="block text-sm mb-5">Estatus</label>
-            <v-select v-model="loteForm.status" :items="statusOptions" density="compact" hide-details clearable=false />
-            <div v-if="errors.status" class="text-red-600 text-sm mt-1">{{ errors.status[0] }}</div>
-          </div>
-
-          <div v-if="editingLote">
-            <label class="block text-sm mb-1">Fecha inicio</label>
-            <DatePicker v-model="loteForm.started_at" />
-            <div v-if="errors.started_at" class="text-red-600 text-sm mt-1">{{ errors.started_at[0] }}</div>
-          </div>
-
-          <div v-if="editingLote">
-            <label class="block text-sm mb-1">Fecha fin</label>
-            <DatePicker v-model="loteForm.ended_at" />
-            <div v-if="errors.ended_at" class="text-red-600 text-sm mt-1">{{ errors.ended_at[0] }}</div>
+        <div class="grid grid-cols-1 gap-4">
+          <div>
+            <label class="block text-sm mb-1">Fecha</label>
+            <DatePicker v-model="loteForm.fecha" />
+            <div v-if="errors.fecha" class="text-red-600 text-sm mt-1">{{ errors.fecha[0] }}</div>
           </div>
 
           <div>
-            <label class="block text-sm mb-1">Fecha inicio esperada</label>
-            <DatePicker v-model="loteForm.expected_started_at" />
-            <div v-if="errors.expected_started_at" class="text-red-600 text-sm mt-1">{{ errors.expected_started_at[0] }}</div>
+            <label class="block text-sm mb-1">Estado de Trabajo</label>
+            <select 
+              v-model="loteForm.estado_trabajo" 
+              class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+            >
+              <option value="no_trabajado">No trabajado</option>
+              <option value="trabajado">Trabajado</option>
+              <option value="interrumpido">Interrumpido</option>
+            </select>
+            <div v-if="errors.estado_trabajo" class="text-red-600 text-sm mt-1">{{ errors.estado_trabajo[0] }}</div>
           </div>
 
-          <div>
-            <label class="block text-sm mb-1">Fecha fin esperada</label>
-            <DatePicker v-model="loteForm.expected_ended_at" />
-            <div v-if="errors.expected_ended_at" class="text-red-600 text-sm mt-1">{{ errors.expected_ended_at[0] }}</div>
-          </div>
-
-          <div>
-            <label class="block text-sm mb-1">Cantidad</label>
-            <v-text-field v-model="loteForm.quantity" type="number" />
-            <div v-if="errors.quantity" class="text-red-600 text-sm mt-1">{{ errors.quantity[0] }}</div>
-          </div>
-
-          <div>
-            <!-- empty placeholder to keep grid balance on small sets -->
+          <div v-if="loteForm.estado_trabajo === 'interrumpido'">
+            <label class="block text-sm mb-1">Razón de Interrupción</label>
+            <v-textarea 
+              v-model="loteForm.razon_interrupcion" 
+              rows="3" 
+              density="compact"
+              placeholder="Explique la razón de la interrupción..."
+            />
+            <div v-if="errors.razon_interrupcion" class="text-red-600 text-sm mt-1">{{ errors.razon_interrupcion[0] }}</div>
           </div>
         </div>
       </div>

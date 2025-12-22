@@ -70,4 +70,37 @@ class Lote extends Model
             'total_mermas' => $this->calculateTotalMermas(),
         ]);
     }
+
+    /**
+     * Inicializa los procesos del lote basándose en el tipo de prenda de la orden
+     */
+    public function initializeProcesos()
+    {
+        // Cargar la orden con el tipo de prenda y sus procesos
+        $this->load('orden.tipoPrenda.procesoNodos');
+        
+        // Si ya tiene procesos, no hacer nada
+        if ($this->loteProcesoProgresos()->count() > 0) {
+            return false;
+        }
+
+        // Verificar que haya procesos definidos
+        if (!$this->orden->tipoPrenda || !$this->orden->tipoPrenda->procesoNodos) {
+            return false;
+        }
+
+        // Crear los registros de progreso para cada proceso
+        foreach ($this->orden->tipoPrenda->procesoNodos as $procesoNodo) {
+            $this->loteProcesoProgresos()->create([
+                'proceso_nodo_id' => $procesoNodo->id,
+                'cantidad_objetivo' => $this->orden->target_quantity ?? 0,
+                'cantidad_completada' => 0,
+                'cantidad_merma' => 0,
+                'cantidad_excedente' => 0,
+                'estado' => 'pendiente',
+            ]);
+        }
+
+        return true;
+    }
 }

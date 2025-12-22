@@ -1,13 +1,25 @@
 <template>
   <AuthenticatedLayout>
-    <template #header>
-      <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-        Detalle Lote #{{ lote.id }} - {{ lote.orden.name }}
-      </h2>
-    </template>
+    <v-card class="p-6">
+      <v-card-title class="d-flex justify-space-between align-center">
+        <div>
+          <h1 class="text-xl mb-1 font-semibold">Detalle del Lote #{{ lote.id }}</h1>
+          <div class="text-sm">Orden: {{ lote.orden.name }} | Cliente: {{ lote.orden.client }}</div>
+          <Breadcrumbs :items="[
+            { text: 'Panel', href: route('welcome') },
+            { text: 'Ordenes', href: route('admin.ordenes.index') },
+            { text: lote.orden.name, href: route('admin.ordenes.lotes.index', lote.orden.id) },
+            { text: `Lote #${lote.id}` }
+          ]" />
+        </div>
+        <div>
+          <Link :href="route('admin.ordenes.lotes.index', lote.orden.id)">
+            <v-btn color="secondary" variant="outlined">Volver</v-btn>
+          </Link>
+        </div>
+      </v-card-title>
 
-    <div class="py-12">
-      <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+      <v-card-text>
         <!-- Información General -->
         <div class="grid grid-cols-4 gap-4 mb-6">
           <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg p-6">
@@ -33,8 +45,26 @@
         <!-- Progreso por Proceso -->
         <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
           <div class="p-6">
-            <h3 class="text-lg font-semibold mb-4">Progreso por Proceso</h3>
-            <div class="space-y-4">
+            <div class="d-flex justify-space-between align-center mb-4">
+              <h3 class="text-lg font-semibold">Progreso por Proceso</h3>
+              <Link v-if="(!lote.lote_proceso_progresos || lote.lote_proceso_progresos.length === 0) && lote.orden?.tipo_prenda_id" 
+                    :href="route('admin.lotes.initializeProcesos', lote.id)" 
+                    method="post" 
+                    as="button">
+                <v-btn color="primary" size="small">Inicializar Procesos</v-btn>
+              </Link>
+            </div>
+            <div v-if="!lote.orden?.tipo_prenda_id" class="text-center py-8">
+              <div class="text-red-600 font-semibold mb-2">⚠️ La orden no tiene un tipo de prenda asignado</div>
+              <div class="text-gray-600 text-sm">
+                Para poder crear procesos, primero debes asignar un tipo de prenda a la orden.
+                <Link :href="route('admin.ordenes.edit', lote.orden.id)" class="text-blue-600 underline">Editar orden</Link>
+              </div>
+            </div>
+            <div v-else-if="!lote.lote_proceso_progresos || lote.lote_proceso_progresos.length === 0" class="text-center py-8 text-gray-500">
+              No hay procesos registrados para este lote. Haz clic en "Inicializar Procesos" para crearlos automáticamente.
+            </div>
+            <div v-else class="space-y-4">
               <div v-for="progreso in lote.lote_proceso_progresos" :key="progreso.id" class="border rounded-lg p-4">
                 <div class="flex justify-between items-start mb-2">
                   <div>
@@ -87,16 +117,27 @@
             </div>
           </div>
         </div>
-      </div>
-    </div>
+      </v-card-text>
+    </v-card>
   </AuthenticatedLayout>
 </template>
 
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
+import Breadcrumbs from '@/Components/Breadcrumbs.vue';
+import { Link } from '@inertiajs/vue3';
+import { onMounted } from 'vue';
 
-defineProps({
+const props = defineProps({
   lote: Object,
+});
+
+onMounted(() => {
+  console.log('Lote completo:', props.lote);
+  console.log('Progresos:', props.lote?.lote_proceso_progresos);
+  console.log('Orden:', props.lote?.orden);
+  console.log('Tipo Prenda:', props.lote?.orden?.tipo_prenda);
+  console.log('¿Tiene tipo_prenda_id?:', props.lote?.orden?.tipo_prenda_id);
 });
 
 const formatDate = (date) => {

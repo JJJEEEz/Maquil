@@ -112,6 +112,7 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
     Route::get('lotes', [\App\Http\Controllers\LoteController::class, 'index'])->name('lotes.index')->middleware('permission:lotes.view');
     Route::get('lotes/{lote}', [\App\Http\Controllers\LoteController::class, 'show'])->name('lotes.show')->middleware('permission:lotes.view');
     Route::put('lotes/{lote}/estado-trabajo', [\App\Http\Controllers\LoteController::class, 'updateEstadoTrabajo'])->name('lotes.updateEstadoTrabajo')->middleware('permission:lotes.edit');
+    Route::post('lotes/{lote}/inicializar-procesos', [\App\Http\Controllers\LoteController::class, 'initializeProcesos'])->name('lotes.initializeProcesos')->middleware('permission:lotes.edit');
 
     Route::get('dashboard', function () {
         return Inertia::render('Admin/Dashboard/index');

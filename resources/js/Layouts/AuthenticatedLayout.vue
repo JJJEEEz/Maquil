@@ -27,6 +27,9 @@ export default {
         canViewTiposPrendas() {
             return this.authPermissions.includes('tipos_prendas.view');
         },
+        canRegistrarProcesos() {
+            return this.authPermissions.includes('procesos.registrar');
+        },
     },
     mounted() {
         this.initDarkMode();

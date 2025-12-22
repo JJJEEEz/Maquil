@@ -48,22 +48,31 @@ class LoteController extends Controller
     public function store(Request $request, Orden $orden)
     {
         $data = $request->validate([
-            'started_at' => 'nullable|date',
-            'ended_at' => 'nullable|date|after_or_equal:started_at',
-            'expected_started_at' => 'nullable|date',
-            'expected_ended_at' => 'nullable|date|after_or_equal:expected_started_at',
-            'status' => 'nullable|string|max:255',
-            'quantity' => 'required|integer|min:0',
+            'fecha' => 'required|date',
+            'estado_trabajo' => 'required|in:trabajado,no_trabajado,interrumpido',
+            'razon_interrupcion' => 'required_if:estado_trabajo,interrumpido|nullable|string',
         ]);
 
         $lote = $orden->lotes()->create([
-            'started_at' => $data['started_at'] ?? null,
-            'ended_at' => $data['ended_at'] ?? null,
-            'expected_started_at' => $data['expected_started_at'] ?? null,
-            'expected_ended_at' => $data['expected_ended_at'] ?? null,
-            'status' => $data['status'] ?? null,
-            'quantity' => $data['quantity'] ?? 0,
+            'fecha' => $data['fecha'],
+            'estado_trabajo' => $data['estado_trabajo'],
+            'razon_interrupcion' => $data['razon_interrupcion'] ?? null,
         ]);
+
+        // Crear automáticamente los registros de progreso para cada proceso del tipo de prenda
+        $orden->load('tipoPrenda.procesoNodos');
+        if ($orden->tipoPrenda && $orden->tipoPrenda->procesoNodos) {
+            foreach ($orden->tipoPrenda->procesoNodos as $procesoNodo) {
+                $lote->loteProcesoProgresos()->create([
+                    'proceso_nodo_id' => $procesoNodo->id,
+                    'cantidad_objetivo' => $orden->target_quantity ?? 0,
+                    'cantidad_completada' => 0,
+                    'cantidad_merma' => 0,
+                    'cantidad_excedente' => 0,
+                    'estado' => 'pendiente',
+                ]);
+            }
+        }
 
         // If the client expects JSON (e.g., axios XHR), return the created lote
         if ($request->expectsJson() || $request->wantsJson()) {
@@ -114,21 +123,15 @@ class LoteController extends Controller
     public function update(Request $request, Lote $lote)
     {
         $data = $request->validate([
-            'started_at' => 'nullable|date',
-            'ended_at' => 'nullable|date|after_or_equal:started_at',
-            'expected_started_at' => 'required|date',
-            'expected_ended_at' => 'required|date|after_or_equal:expected_started_at',
-            'status' => 'nullable|string|max:255',
-            'quantity' => 'required|integer|min:0',
+            'fecha' => 'required|date',
+            'estado_trabajo' => 'required|in:trabajado,no_trabajado,interrumpido',
+            'razon_interrupcion' => 'required_if:estado_trabajo,interrumpido|nullable|string',
         ]);
 
         $lote->update([
-            'started_at' => $data['started_at'] ?? $lote->started_at,
-            'ended_at' => $data['ended_at'] ?? $lote->ended_at,
-            'expected_started_at' => $data['expected_started_at'] ?? $lote->expected_started_at,
-            'expected_ended_at' => $data['expected_ended_at'] ?? $lote->expected_ended_at,
-            'status' => $data['status'] ?? $lote->status,
-            'quantity' => $data['quantity'] ?? $lote->quantity,
+            'fecha' => $data['fecha'],
+            'estado_trabajo' => $data['estado_trabajo'],
+            'razon_interrupcion' => $data['razon_interrupcion'] ?? null,
         ]);
         if ($request->expectsJson() || $request->wantsJson()) {
             return response()->json(['lote' => $lote->toArray()]);

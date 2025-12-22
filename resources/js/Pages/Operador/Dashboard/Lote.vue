@@ -1,13 +1,25 @@
 <template>
   <AuthenticatedLayout>
-    <template #header>
-      <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-        Dashboard - Lote #{{ lote.id }} | {{ orden.name }}
-      </h2>
-    </template>
+    <v-card class="p-6">
+      <v-card-title class="d-flex justify-space-between align-center">
+        <div>
+          <h1 class="text-xl mb-1 font-semibold">Dashboard - Lote #{{ lote.id }}</h1>
+          <div class="text-sm">Orden: {{ orden.name }} | Cliente: {{ orden.client }}</div>
+          <Breadcrumbs :items="[
+            { text: 'Panel', href: route('welcome') },
+            { text: 'Ordenes', href: route('admin.ordenes.index') },
+            { text: orden.name, href: route('admin.ordenes.lotes.index', orden.id) },
+            { text: `Lote #${lote.id}` }
+          ]" />
+        </div>
+        <div>
+          <Link :href="route('admin.ordenes.lotes.index', orden.id)">
+            <v-btn color="secondary" variant="outlined">Volver</v-btn>
+          </Link>
+        </div>
+      </v-card-title>
 
-    <div class="py-12">
-      <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+      <v-card-text>
         <!-- Resumen del Día -->
         <div class="grid grid-cols-4 gap-4 mb-6">
           <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg p-6">
@@ -150,13 +162,15 @@
             </form>
           </div>
         </div>
-      </div>
-    </div>
+      </v-card-text>
+    </v-card>
   </AuthenticatedLayout>
 </template>
 
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
+import Breadcrumbs from '@/Components/Breadcrumbs.vue';
+import { Link } from '@inertiajs/vue3';
 import { ref, onMounted, onUnmounted } from 'vue';
 import axios from 'axios';
 

@@ -112,7 +112,7 @@ const maxWidthClass = computed(() => {
             >
                 <div
                     v-show="show"
-                    class="mb-6 transform overflow-hidden rounded-lg shadow-xl transition-all sm:mx-auto sm:w-full themed-modal"
+                    class="mb-6 transform rounded-lg shadow-xl transition-all sm:mx-auto sm:w-full themed-modal"
                     :class="maxWidthClass"
                 >
                     <!-- Scrollable content area: restrict max height and allow internal scrolling -->

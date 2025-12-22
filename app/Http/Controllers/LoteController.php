@@ -19,7 +19,7 @@ class LoteController extends Controller
 
     public function show(Lote $lote)
     {
-        $lote->load('orden.tipoPrenda', 'loteProcesoProgresos.procesoNodo');
+        $lote->load('orden.tipoPrenda', 'loteProcesoProgresos.procesoNodo', 'loteProcesoProgresos.registradoPor');
 
         return Inertia::render('Admin/Lotes/Show', [
             'lote' => $lote,
@@ -41,10 +41,24 @@ class LoteController extends Controller
 
     public function dashboard(Lote $lote)
     {
-        $lote->load('orden.tipoPrenda', 'loteProcesoProgresos.procesoNodo.dependencias');
+        $lote->load('orden.tipoPrenda', 'loteProcesoProgresos.procesoNodo.dependencias', 'loteProcesoProgresos.registradoPor');
 
         return Inertia::render('Operador/Dashboard/Lote', [
             'lote' => $lote,
+            'orden' => $lote->orden,
+            'progresos' => $lote->loteProcesoProgresos,
+            'procesoNodos' => $lote->orden->tipoPrenda->procesoNodos ?? [],
         ]);
+    }
+
+    public function initializeProcesos(Lote $lote)
+    {
+        $initialized = $lote->initializeProcesos();
+        
+        if ($initialized) {
+            return redirect()->back()->with('success', 'Procesos inicializados correctamente');
+        }
+        
+        return redirect()->back()->with('info', 'El lote ya tiene procesos inicializados o no hay procesos definidos en el tipo de prenda');
     }
 }
