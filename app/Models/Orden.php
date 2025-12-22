@@ -23,6 +23,7 @@ class Orden extends Model
         'status',
         'target_quantity',
         'target_date',
+        'tipo_prenda_id',
     ];
 
     protected $casts = [
@@ -48,5 +49,10 @@ class Orden extends Model
     public function lotes()
     {
         return $this->hasMany(Lote::class);
+    }
+
+    public function tipoPrenda()
+    {
+        return $this->belongsTo(TipoPrenda::class);
     }
 }

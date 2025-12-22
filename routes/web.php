@@ -90,9 +90,41 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
     Route::put('ordenes/lotes/{lote}', [\App\Http\Controllers\Admin\LoteController::class, 'update'])->name('ordenes.lotes.update')->middleware('permission:lotes.edit');
     Route::delete('ordenes/lotes/{lote}', [\App\Http\Controllers\Admin\LoteController::class, 'destroy'])->name('ordenes.lotes.destroy')->middleware('permission:lotes.delete');
 
+    // Tipos de Prendas routes
+    Route::get('tipos-prendas', [\App\Http\Controllers\TipoPrendaController::class, 'index'])->name('tipos-prendas.index')->middleware('permission:tipos_prendas.view');
+    Route::get('tipos-prendas/create', [\App\Http\Controllers\TipoPrendaController::class, 'create'])->name('tipos-prendas.create')->middleware('permission:tipos_prendas.create');
+    Route::post('tipos-prendas', [\App\Http\Controllers\TipoPrendaController::class, 'store'])->name('tipos-prendas.store')->middleware('permission:tipos_prendas.create');
+    Route::get('tipos-prendas/{tipoPrenda}/edit', [\App\Http\Controllers\TipoPrendaController::class, 'edit'])->name('tipos-prendas.edit')->middleware('permission:tipos_prendas.edit');
+    Route::put('tipos-prendas/{tipoPrenda}', [\App\Http\Controllers\TipoPrendaController::class, 'update'])->name('tipos-prendas.update')->middleware('permission:tipos_prendas.edit');
+    Route::delete('tipos-prendas/{tipoPrenda}', [\App\Http\Controllers\TipoPrendaController::class, 'destroy'])->name('tipos-prendas.destroy')->middleware('permission:tipos_prendas.delete');
+
+    // Procesos Nodos routes
+    Route::get('tipos-prendas/{tipoPrenda}/procesos', [\App\Http\Controllers\ProcesoNodoController::class, 'index'])->name('proceso-nodos.index')->middleware('permission:procesos.view');
+    Route::get('tipos-prendas/{tipoPrenda}/procesos/create', [\App\Http\Controllers\ProcesoNodoController::class, 'create'])->name('proceso-nodos.create')->middleware('permission:procesos.create');
+    Route::post('tipos-prendas/{tipoPrenda}/procesos', [\App\Http\Controllers\ProcesoNodoController::class, 'store'])->name('proceso-nodos.store')->middleware('permission:procesos.create');
+    Route::get('tipos-prendas/{tipoPrenda}/procesos/{nodo}/edit', [\App\Http\Controllers\ProcesoNodoController::class, 'edit'])->name('proceso-nodos.edit')->middleware('permission:procesos.edit');
+    Route::put('tipos-prendas/{tipoPrenda}/procesos/{nodo}', [\App\Http\Controllers\ProcesoNodoController::class, 'update'])->name('proceso-nodos.update')->middleware('permission:procesos.edit');
+    Route::delete('tipos-prendas/{tipoPrenda}/procesos/{nodo}', [\App\Http\Controllers\ProcesoNodoController::class, 'destroy'])->name('proceso-nodos.destroy')->middleware('permission:procesos.delete');
+    Route::post('tipos-prendas/{tipoPrenda}/procesos/reorder', [\App\Http\Controllers\ProcesoNodoController::class, 'reorder'])->name('proceso-nodos.reorder')->middleware('permission:procesos.edit');
+    Route::get('tipos-prendas/{tipoPrenda}/procesos/tree', [\App\Http\Controllers\ProcesoNodoController::class, 'getTreeStructure'])->name('proceso-nodos.tree');
+
+    // Lotes routes
+    Route::get('lotes', [\App\Http\Controllers\LoteController::class, 'index'])->name('lotes.index')->middleware('permission:lotes.view');
+    Route::get('lotes/{lote}', [\App\Http\Controllers\LoteController::class, 'show'])->name('lotes.show')->middleware('permission:lotes.view');
+    Route::put('lotes/{lote}/estado-trabajo', [\App\Http\Controllers\LoteController::class, 'updateEstadoTrabajo'])->name('lotes.updateEstadoTrabajo')->middleware('permission:lotes.edit');
+
     Route::get('dashboard', function () {
         return Inertia::render('Admin/Dashboard/index');
     })->name('dashboard.index');
+});
+
+// Operador routes
+Route::middleware(['auth'])->prefix('operador')->name('operador.')->group(function () {
+    Route::get('lotes/{lote}/dashboard', [\App\Http\Controllers\LoteController::class, 'dashboard'])->name('lotes.dashboard')->middleware('permission:procesos.registrar');
+    Route::get('lotes/{lote}/progreso', [\App\Http\Controllers\LoteProcesoProgresoController::class, 'show'])->name('progreso.show')->middleware('permission:procesos.registrar');
+    Route::post('lotes/{lote}/progreso', [\App\Http\Controllers\LoteProcesoProgresoController::class, 'store'])->name('progreso.store')->middleware('permission:procesos.registrar');
+    Route::post('lotes/{lote}/progreso/marcar-completado', [\App\Http\Controllers\LoteProcesoProgresoController::class, 'markAsCompleted'])->name('progreso.marcar-completado')->middleware('permission:procesos.registrar');
+    Route::get('lotes/{lote}/progreso/api', [\App\Http\Controllers\LoteProcesoProgresoController::class, 'getProgress'])->name('progreso.api')->middleware('permission:procesos.registrar');
 });
 
 require __DIR__.'/auth.php';

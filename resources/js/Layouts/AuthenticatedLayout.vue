@@ -24,6 +24,9 @@ export default {
         canViewRoles() {
             return this.authPermissions.includes('roles.view');
         },
+        canViewTiposPrendas() {
+            return this.authPermissions.includes('tipos_prendas.view');
+        },
     },
     mounted() {
         this.initDarkMode();
@@ -99,6 +102,9 @@ export default {
                     <Link :href="route('admin.ordenes.index')">Ordenes de producción</Link>
                 </v-list-item>
                 <v-list-subheader>Panel de Administración</v-list-subheader>
+                <v-list-item v-if="canViewTiposPrendas">
+                    <Link :href="route('admin.tipos-prendas.index')">Diagrama de Procesos</Link>
+                </v-list-item>
                 <v-list-item v-if="canViewUsers">
                     <Link :href="route('admin.users.index')">Usuarios</Link>
                 </v-list-item>

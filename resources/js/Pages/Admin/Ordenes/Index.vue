@@ -10,7 +10,7 @@ import SecondaryButton from '@/Components/SecondaryButton.vue';
 import Breadcrumbs from '@/Components/Breadcrumbs.vue';
 import { Head } from '@inertiajs/vue3';
 
-const props = defineProps({ ordenes: Object });
+const props = defineProps({ ordenes: Object, tiposPrendas: Array });
 const ordenes = props.ordenes;
 
 const page = usePage();
@@ -182,7 +182,7 @@ function statusColor(status) {
     </v-card>
 
     <Modal :show="showModal" @close="close">
-      <OrdenForm ref="ordenFormRef" :orden="editItem" @saved="onSaved" @close="close" />
+      <OrdenForm ref="ordenFormRef" :orden="editItem" :tiposPrendas="tiposPrendas" @saved="onSaved" @close="close" />
 
       <template #footer>
         <div class="modal-actions mt-4 flex justify-between px-6">

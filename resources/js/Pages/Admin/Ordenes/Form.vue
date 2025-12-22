@@ -8,7 +8,7 @@ import SecondaryButton from '@/Components/SecondaryButton.vue';
 import DatePicker from '@/Components/DatePicker.vue';
 import { Head } from '@inertiajs/vue3';
 
-const incoming = defineProps({ orden: Object });
+const incoming = defineProps({ orden: Object, tiposPrendas: Array });
 const emit = defineEmits(['saved', 'close']);
 
 const isEdit = computed(() => !!incoming.orden && incoming.orden !== null);
@@ -21,6 +21,7 @@ const form = useForm({
   status: incoming.orden ? incoming.orden.status : 'pending',
   target_quantity: incoming.orden ? incoming.orden.target_quantity : 0,
   target_date: incoming.orden ? (incoming.orden.target_date ? incoming.orden.target_date : '') : '',
+  tipo_prenda_id: incoming.orden ? incoming.orden.tipo_prenda_id : null,
 });
 
 const todayStr = new Date().toISOString().slice(0,10);
@@ -42,6 +43,7 @@ function submit() {
       target_quantity: (form.target_quantity === '' || form.target_quantity === null) ? null : Number(form.target_quantity),
       // send null when empty to satisfy nullable|date rules on server
       target_date: form.target_date && String(form.target_date).trim() !== '' ? form.target_date : null,
+      tipo_prenda_id: form.tipo_prenda_id ? Number(form.tipo_prenda_id) : null,
     };
 
     axios.put(route('admin.ordenes.update', incoming.orden.id), payload)
@@ -66,6 +68,7 @@ function submit() {
       status: form.status,
       target_quantity: form.target_quantity,
       target_date: form.target_date && String(form.target_date).trim() !== '' ? form.target_date : null,
+      tipo_prenda_id: form.tipo_prenda_id ? Number(form.tipo_prenda_id) : null,
     };
 
     axios.post(route('admin.ordenes.store'), payload)
@@ -97,6 +100,21 @@ defineExpose({
     <h2 class="text-lg font-semibold mb-4">{{ isEdit ? 'Editar Orden' : 'Crear Orden' }}</h2>
     <form @submit.prevent="submit">
       <Input v-model="form.name" label="Nombre" :error="!!form.errors.name" :error-messages="form.errors.name" />
+      <div class="mt-4">
+        <label class="block font-medium">Tipo de Prenda</label>
+        <select
+          v-model="form.tipo_prenda_id"
+          class="w-full border border-gray-300 rounded px-3 py-2 mt-2"
+          :class="{ 'border-red-500': form.errors.tipo_prenda_id }"
+        >
+          <option value="">Seleccionar tipo de prenda...</option>
+          <option v-for="tp in tiposPrendas" :key="tp.id" :value="tp.id">{{ tp.nombre }}</option>
+        </select>
+        <div v-if="form.errors.tipo_prenda_id" class="text-red-600 text-sm mt-1">
+          <div v-if="Array.isArray(form.errors.tipo_prenda_id)" v-for="(err, i) in form.errors.tipo_prenda_id" :key="i">{{ err }}</div>
+          <div v-else>{{ form.errors.tipo_prenda_id }}</div>
+        </div>
+      </div>
       <Input v-model="form.client" label="Cliente" :error="!!form.errors.client" :error-messages="form.errors.client" />
       <div>
         <DatePicker

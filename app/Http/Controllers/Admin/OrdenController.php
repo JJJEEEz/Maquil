@@ -17,6 +17,9 @@ class OrdenController extends Controller
     public function index()
     {
         $ordenes = Orden::withCount('lotes')->orderBy('id', 'desc')->paginate(15);
+        
+        // Get all tipos de prendas for the dropdown
+        $tiposPrendas = \App\Models\TipoPrenda::all();
 
         $authPermissions = [];
         if (auth()->check()) {
@@ -36,6 +39,7 @@ class OrdenController extends Controller
         }
         return Inertia::render('Admin/Ordenes/Index', [
             'ordenes' => $ordenes,
+            'tiposPrendas' => $tiposPrendas,
             'authPermissions' => $authPermissions,
         ]);
     }
