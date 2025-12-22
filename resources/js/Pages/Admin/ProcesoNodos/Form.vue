@@ -23,6 +23,18 @@ const form = useForm({
   dependencias: props.nodo && props.nodo.dependencias ? props.nodo.dependencias.map(d => d.id) : [],
 });
 
+// Filtrar solo procesos con orden menor al actual
+const nodosDisponiblesFiltrados = computed(() => {
+  const ordenActual = Number(form.orden);
+  if (ordenActual <= 0) return [];
+  return props.nodosDisponibles.filter(nodo => {
+    // En modo edición, excluir el nodo actual
+    if (isEdit.value && props.nodo && nodo.id === props.nodo.id) return false;
+    // Solo incluir nodos con orden menor
+    return Number(nodo.orden) < ordenActual;
+  });
+});
+
 function submit() {
   const payload = {
     nombre: form.nombre,
@@ -81,7 +93,7 @@ defineExpose({
       <div class="grid grid-cols-2 gap-4">
         <div>
           <label class="block font-medium">Tipo</label>
-          <select v-model="form.tipo" class="w-full border border-gray-300 rounded px-3 py-2 mt-2" :class="{ 'border-red-500': form.errors.tipo }">
+          <select v-model="form.tipo" class="w-full border rounded px-3 py-2 mt-2 themed-input" :class="{ 'border-red-500': form.errors.tipo }">
             <option value="operacion">Operación</option>
             <option value="inspeccion">Inspección</option>
           </select>
@@ -90,7 +102,7 @@ defineExpose({
 
         <div>
           <label class="block font-medium">Orden (Secuencia)</label>
-          <input v-model.number="form.orden" type="number" class="w-full border border-gray-300 rounded px-3 py-2 mt-2" :class="{ 'border-red-500': form.errors.orden }" />
+          <input v-model.number="form.orden" type="number" class="w-full border rounded px-3 py-2 mt-2 themed-input" :class="{ 'border-red-500': form.errors.orden }" />
           <div v-if="form.errors.orden" class="text-red-600 text-sm mt-1">{{ form.errors.orden }}</div>
         </div>
       </div>
@@ -98,14 +110,14 @@ defineExpose({
       <div class="grid grid-cols-2 gap-4">
         <div>
           <label class="block font-medium">Cantidad Entrada</label>
-          <input v-model.number="form.cantidad_entrada" type="number" min="1" class="w-full border border-gray-300 rounded px-3 py-2 mt-2" :class="{ 'border-red-500': form.errors.cantidad_entrada }" />
+          <input v-model.number="form.cantidad_entrada" type="number" min="1" class="w-full border rounded px-3 py-2 mt-2 themed-input" :class="{ 'border-red-500': form.errors.cantidad_entrada }" />
           <p class="text-xs text-gray-500 mt-1">Ej: 2 si necesita 2 piezas de entrada</p>
           <div v-if="form.errors.cantidad_entrada" class="text-red-600 text-sm mt-1">{{ form.errors.cantidad_entrada }}</div>
         </div>
 
         <div>
           <label class="block font-medium">Cantidad Salida</label>
-          <input v-model.number="form.cantidad_salida" type="number" min="1" class="w-full border border-gray-300 rounded px-3 py-2 mt-2" :class="{ 'border-red-500': form.errors.cantidad_salida }" />
+          <input v-model.number="form.cantidad_salida" type="number" min="1" class="w-full border rounded px-3 py-2 mt-2 themed-input" :class="{ 'border-red-500': form.errors.cantidad_salida }" />
           <p class="text-xs text-gray-500 mt-1">Ej: 1 si produce 1 pieza de salida</p>
           <div v-if="form.errors.cantidad_salida" class="text-red-600 text-sm mt-1">{{ form.errors.cantidad_salida }}</div>
         </div>
@@ -113,24 +125,24 @@ defineExpose({
 
       <div>
         <label class="block font-medium">Tiempo Estimado (minutos)</label>
-        <input v-model.number="form.tiempo_estimado_minutos" type="number" min="1" class="w-full border border-gray-300 rounded px-3 py-2 mt-2" :class="{ 'border-red-500': form.errors.tiempo_estimado_minutos }" />
+        <input v-model.number="form.tiempo_estimado_minutos" type="number" min="1" class="w-full border rounded px-3 py-2 mt-2 themed-input" :class="{ 'border-red-500': form.errors.tiempo_estimado_minutos }" />
         <div v-if="form.errors.tiempo_estimado_minutos" class="text-red-600 text-sm mt-1">{{ form.errors.tiempo_estimado_minutos }}</div>
       </div>
 
       <div>
         <label class="block font-medium">Procesos de los que depende (Padres)</label>
         <div class="space-y-2 mt-2 max-h-48 overflow-y-auto border border-gray-300 rounded p-3">
-          <label v-for="nodoOpt in nodosDisponibles" :key="nodoOpt.id" class="flex items-center">
+          <label v-for="nodoOpt in nodosDisponiblesFiltrados" :key="nodoOpt.id" class="flex items-center">
             <input type="checkbox" :value="nodoOpt.id" v-model="form.dependencias" class="mr-2" />
-            <span class="text-sm">{{ nodoOpt.nombre }}</span>
+            <span class="text-sm">{{ nodoOpt.nombre }} (Orden: {{ nodoOpt.orden }})</span>
           </label>
-          <div v-if="nodosDisponibles.length === 0" class="text-gray-500 text-sm p-2">
-            No hay procesos disponibles
+          <div v-if="nodosDisponiblesFiltrados.length === 0" class="text-gray-500 text-sm p-2">
+            No hay procesos con orden menor disponibles
           </div>
         </div>
         <p class="text-xs text-gray-500 mt-2">
           Selecciona los procesos cuyo resultado es necesario para este proceso.<br>
-          Ej: "Costura Manga Frente" depende de "Corte Manga" y "Corte Frente"
+          Solo se muestran procesos con orden menor.
         </p>
         <div v-if="form.errors.dependencias" class="text-red-600 text-sm mt-1">{{ form.errors.dependencias }}</div>
       </div>

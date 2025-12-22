@@ -112,15 +112,15 @@ const maxWidthClass = computed(() => {
             >
                 <div
                     v-show="show"
-                    class="mb-6 transform overflow-hidden rounded-lg bg-white shadow-xl transition-all sm:mx-auto sm:w-full"
+                    class="mb-6 transform overflow-hidden rounded-lg shadow-xl transition-all sm:mx-auto sm:w-full themed-modal"
                     :class="maxWidthClass"
                 >
                     <!-- Scrollable content area: restrict max height and allow internal scrolling -->
-                    <div class="modal-inner" style="max-height: calc(100vh - 80px); overflow:auto; display:flex; flex-direction:column;">
-                        <div class="modal-body" style="flex:1 1 auto; overflow:auto;">
+                    <div class="modal-inner">
+                        <div class="modal-body">
                           <slot v-if="showSlot" />
                         </div>
-                        <div class="modal-actions-wrapper" style="flex:0 0 auto;">
+                        <div class="modal-actions-wrapper">
                           <slot name="footer" />
                         </div>
                     </div>
@@ -131,21 +131,49 @@ const maxWidthClass = computed(() => {
 </template>
 
 <style scoped>
+.themed-modal {
+    background-color: #ffffff !important;
+    color: #0B1220;
+}
+
+.v-theme--dark .themed-modal {
+    background-color: #16151bff !important;
+    color: #F8FAFC;
+}
+
 .modal-inner {
-    /* ensure the inner area is the scrolling viewport for slot content */
     position: relative;
     display: flex;
     flex-direction: column;
+    max-height: calc(100vh - 80px);
+    overflow: auto;
+    background-color: #ffffff;
 }
+
+.v-theme--dark .modal-inner {
+    background-color: #16151bff;
+}
+
 .modal-body {
     flex: 1 1 auto;
     overflow: auto;
+    background-color: #ffffff;
 }
+
+.v-theme--dark .modal-body {
+    background-color: #000000;
+}
+
 .modal-actions-wrapper {
     flex: 0 0 auto;
-    background: white;
+    background-color: #ffffff;
     border-top: 1px solid rgba(0,0,0,0.06);
     padding-top: 12px;
     padding-bottom: 12px;
+}
+
+.v-theme--dark .modal-actions-wrapper {
+    background-color: #000000;
+    border-top-color: rgba(255,255,255,0.08);
 }
 </style>

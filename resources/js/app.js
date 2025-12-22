@@ -24,6 +24,43 @@ createInertiaApp({
             import.meta.glob('./Pages/**/*.vue'),
         ),
     setup({ el, App, props, plugin }) {
+        const vuetifyThemes = {
+            light: {
+                dark: false,
+                colors: {
+                    primary: '#374151',
+                    secondary: '#6B7280',
+                    tertiary: '#10B981',
+                    success: '#10B981',
+                    info: '#0EA5E9',
+                    warning: '#F59E0B',
+                    error: '#EF4444',
+                    background: '#F8FAFC',
+                    surface: '#FFFFFF',
+                    'on-surface': '#0B1220',
+                    'on-primary': '#FFFFFF',
+                    'on-tertiary': '#FFFFFF'
+                }
+            },
+            dark: {
+                dark: true,
+                colors: {
+                    primary: '#9CA3AF',
+                    secondary: '#4B5563',
+                    tertiary: '#34D399',
+                    success: '#34D399',
+                    info: '#60A5FA',
+                    warning: '#F59E0B',
+                    error: '#EF4444',
+                    background: '#16151bff',
+                    surface: '#000000ff',
+                    'on-surface': '#F8FAFC',
+                    'on-primary': '#0B1220',
+                    'on-tertiary': '#0B1220'
+                }
+            }
+        };
+
         const vuetify = createVuetify({
             components,
             directives,
@@ -33,60 +70,35 @@ createInertiaApp({
             },
             theme: {
                 defaultTheme: 'light',
-                themes: {
-                    light: {
-                        dark: false, // Indica que este es el tema claro
-                        colors: {
-                            // Colores Principales Lujo Dorado
-                            primary: '#d1ac3a',   // Oro Viejo (El foco principal en ambas versiones)
-                            secondary: '#021561ff', 
-                            tertiary: '#00A36C',  // Verde Esmeralda (Acento 2)
-
-                            // Colores Funcionales (Alto contraste sobre fondo CLARO)
-                            success: '#10B981',   // Éxito
-                            info: '#0EA5E9',      // Información
-                            warning: '#F59E0B',   // Advertencia (Tono original)
-                            error: '#EF4444',     // Error
-
-                            // Fondos y Superficies (Tema CLARO)
-                            background: '#FFFFFF', // Fondo principal BLANCO
-                            surface: '#F5F5F5',    // Superficie/Tarjetas (Gris claro)
-                            // Colores de Texto (On-Colors)
-                            'on-surface': '#111827',  // Texto sobre fondo/superficie CLARO (Negro oscuro)
-                            'on-primary': '#111827',  // Texto sobre Dorado (Negro oscuro para mayor legibilidad)
-                            'on-tertiary': '#FFFFFF'  // Texto sobre Esmeralda (Blanco)
-                        }
-                    },
-
-                    // === MODO OSCURO (DARK) ===
-                    dark: {
-                        dark: true, // Indica que este es el tema oscuro
-                        colors: {
-                            // Colores Principales Lujo Dorado (Se mantienen los mismos tonos vibrantes)
-                            primary: '#FFD700',   // Oro Viejo (El foco principal en ambas versiones)
-                            secondary: '#546090ff', // Borgoña Profundo (Acento 1)
-                            tertiary: '#00A36C',  // Verde Esmeralda (Acento 2)
-
-                            // Colores Funcionales (Se mantienen los tonos vibrantes para contraste)
-                            success: '#10B981',   // Éxito
-                            info: '#0EA5E9',      // Información
-                            warning: '#FFC107',   // Advertencia (Más vibrante sobre fondo oscuro)
-                            error: '#EF4444',     // Error
-
-                            // Fondos y Superficies (Tema OSCURO - El modo que creamos antes)
-                            background: '#121212', // Negro Azabache (Fondo principal)
-                            surface: '#1D1D1D',    // Superficie/Tarjetas
-
-                            // Colores de Texto (On-Colors)
-                            'on-surface': '#F5F5F5',  // Texto sobre fondo/superficie OSCURO (Blanco roto)
-                            'on-primary': '#111827',  // Texto sobre Dorado (Negro oscuro para legibilidad)
-                            'on-tertiary': '#F5F5F5'  // Texto sobre Esmeralda (Blanco roto)
-                        }
-                    }
-                }
-                },
+                themes: vuetifyThemes,
             },
-        );
+        });
+
+        // Inject CSS variables for light and dark themes so our helpers (themed-*) work
+        try {
+            const light = vuetifyThemes.light.colors;
+            const dark = vuetifyThemes.dark.colors;
+            const css = `:root {
+  --v-theme-primary: ${light.primary};
+  --v-theme-on-primary: ${light['on-primary']};
+  --v-theme-surface: ${light.surface};
+  --v-theme-on-surface: ${light['on-surface']};
+  --v-theme-outline: rgba(0,0,0,0.12);
+}
+.v-theme--dark {
+  --v-theme-primary: ${dark.primary};
+  --v-theme-on-primary: ${dark['on-primary']};
+  --v-theme-surface: ${dark.surface};
+  --v-theme-on-surface: ${dark['on-surface']};
+  --v-theme-outline: rgba(255,255,255,0.08);
+}`;
+            const style = document.createElement('style');
+            style.setAttribute('data-generated-by', 'vuetify-theme-vars');
+            style.appendChild(document.createTextNode(css));
+            document.head.appendChild(style);
+        } catch (e) {
+            // ignore if DOM not available during SSR/build
+        }
 
         const app = createApp({ render: () => h(App, props) });
 

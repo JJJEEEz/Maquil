@@ -7,8 +7,6 @@ import { Inertia } from '@inertiajs/inertia';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import Modal from '@/Components/Modal.vue';
 import ProcesoNodoForm from '@/Pages/Admin/ProcesoNodos/Form.vue';
-import Button from '@/Components/UI/Button.vue';
-import SecondaryButton from '@/Components/SecondaryButton.vue';
 import ProcessTree from '@/Components/ProcessTree.vue';
 
 const props = defineProps({
@@ -105,7 +103,7 @@ function remove(id) {
         </div>
 
         <!-- Visualización de Árbol de Procesos -->
-        <div class="bg-gray-50 dark:bg-gray-900 p-4 rounded-lg overflow-x-auto mb-6">
+        <div class="themed-panel p-4 rounded-lg overflow-x-auto mb-6">
           <h3 class="text-lg font-semibold mb-4">Diagrama de Flujo de Procesos</h3>
           <ProcessTree :nodos="nodos" @edit="openEdit" />
         </div>
@@ -159,13 +157,16 @@ function remove(id) {
       <ProcesoNodoForm ref="procesoNodoFormRef" :nodo="editItem" :nodosDisponibles="nodosDisponibles" :tipoPrenda="tipoPrenda" @saved="onSaved" @close="close" />
 
       <template #footer>
-        <div class="modal-actions mt-4 flex justify-between px-6">
-          <div>
-            <SecondaryButton type="button" @click.prevent="close">Cerrar</SecondaryButton>
-          </div>
-          <div>
-            <Button type="button" @click.prevent="procesoNodoFormRef && procesoNodoFormRef.submitForm()" :disabled="procesoNodoFormRef && procesoNodoFormRef.processing">Guardar</Button>
-          </div>
+        <div class="modal-actions mt-4 d-flex justify-space-between px-6">
+          <v-btn variant="outlined" @click="close">Cerrar</v-btn>
+          <v-btn 
+            color="primary" 
+            @click="procesoNodoFormRef && procesoNodoFormRef.submitForm()" 
+            :disabled="procesoNodoFormRef && procesoNodoFormRef.processing"
+            :loading="procesoNodoFormRef && procesoNodoFormRef.processing"
+          >
+            Guardar
+          </v-btn>
         </div>
       </template>
     </Modal>
@@ -174,4 +175,24 @@ function remove(id) {
 
 <style scoped>
 .actions-cell { display: flex; gap: 6px; align-items: center; }
+
+/* Theme helpers */
+.themed-panel {
+  background: var(--v-theme-background, #F8FAFC);
+  color: var(--v-theme-on-surface, #0B1220);
+}
+
+.themed-action {
+  background: var(--v-theme-primary, #374151);
+  color: var(--v-theme-on-primary, #FFFFFF);
+  padding: 0.5rem 0.75rem;
+  border-radius: 0.375rem;
+}
+
+.themed-cancel {
+  background: var(--v-theme-secondary, #6B7280);
+  color: var(--v-theme-on-primary, #FFFFFF);
+  padding: 0.5rem 0.75rem;
+  border-radius: 0.375rem;
+}
 </style>

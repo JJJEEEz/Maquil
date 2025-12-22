@@ -250,7 +250,8 @@ const svgHeight = computed(() => {
   align-items: center;
   padding: 1rem;
   border-radius: 0.75rem 0.75rem 0 0;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+  background: var(--v-theme-background, #F8FAFC);
 }
 
 .header-left {
@@ -267,15 +268,15 @@ const svgHeight = computed(() => {
   font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
-  color: #1f2937;
+  color: var(--v-theme-on-surface);
   padding: 0.5rem 1rem;
   border-radius: 0.375rem;
   transition: all 0.3s ease;
 }
 
 .toggle-btn:hover {
-  background-color: rgba(0, 0, 0, 0.05);
-  color: #374151;
+  background-color: rgba(0, 0, 0, 0.04);
+  color: var(--v-theme-on-surface);
 }
 
 .toggle-icon {
@@ -292,19 +293,19 @@ const svgHeight = computed(() => {
 .zoom-btn {
   width: 2.5rem;
   height: 2.5rem;
-  border: 1px solid #d1d5db;
-  background: white;
+  border: 1px solid var(--v-theme-secondary, #6B7280);
+  background: var(--v-theme-surface, #FFFFFF);
   border-radius: 0.375rem;
   cursor: pointer;
   font-size: 1.25rem;
   font-weight: bold;
-  color: #374151;
+  color: var(--v-theme-on-primary, #FFFFFF);
   transition: all 0.2s ease;
 }
 
 .zoom-btn:hover:not(:disabled) {
-  background-color: #f3f4f6;
-  border-color: #9ca3af;
+  background-color: rgba(0,0,0,0.04);
+  border-color: var(--v-theme-secondary);
 }
 
 .zoom-btn:disabled {
@@ -316,13 +317,13 @@ const svgHeight = computed(() => {
   min-width: 3rem;
   text-align: center;
   font-weight: 500;
-  color: #374151;
+  color: var(--v-theme-on-surface, #0B1220);
 }
 
 .process-flow-diagram {
   width: 100%;
   overflow: auto;
-  background: linear-gradient(135deg, #f0f9ff 0%, #f3e8ff 50%, #fef3c7 100%);
+  background: var(--v-theme-background, #F8FAFC);
   border-radius: 0 0 0.75rem 0.75rem;
   padding: 1rem;
 }
@@ -330,9 +331,9 @@ const svgHeight = computed(() => {
 .flow-svg {
   width: 100%;
   height: auto;
-  background: white;
+  background: var(--v-theme-surface, #FFFFFF);
   border-radius: 0.5rem;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
 }
 
 .empty-state {
@@ -340,25 +341,26 @@ const svgHeight = computed(() => {
   align-items: center;
   justify-content: center;
   height: 500px;
-  color: #9ca3af;
+  color: var(--v-theme-secondary, #6B7280);
   font-size: 1rem;
 }
 
 /* Conexiones */
 .connection-line {
+  stroke: #3b82f6;
   stroke-width: 3;
   fill: none;
   stroke-linecap: round;
   stroke-linejoin: round;
-  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
-  opacity: 0.8;
-  transition: all 0.3s ease;
+  filter: drop-shadow(0 2px 4px rgba(59, 130, 246, 0.12));
+  opacity: 0.95;
+  transition: all 0.2s ease;
 }
 
 .connection-line:hover {
   stroke-width: 4;
   opacity: 1;
-  filter: drop-shadow(0 3px 6px rgba(59, 130, 246, 0.3));
+  filter: drop-shadow(0 3px 6px rgba(59,130,246,0.18));
 }
 
 /* Nodos */
@@ -372,12 +374,12 @@ const svgHeight = computed(() => {
 }
 
 .node-shadow {
-  fill: rgba(0, 0, 0, 0.1);
+  fill: rgba(0, 0, 0, 0.12);
   filter: blur(4px);
 }
 
 .node-rect {
-  fill: white;
+  fill: #ffffff;
   stroke: #3b82f6;
   stroke-width: 2.5;
   transition: all 0.3s ease;
@@ -389,12 +391,12 @@ const svgHeight = computed(() => {
 }
 
 .node-rect.inspeccion {
-  fill: #fef3c7;
+  fill: #fff7ed;
   stroke: #f59e0b;
 }
 
 .node-group:hover .node-rect {
-  filter: drop-shadow(0 4px 12px rgba(59, 130, 246, 0.4));
+  filter: drop-shadow(0 4px 12px rgba(59,130,246,0.28));
   stroke-width: 3;
 }
 
@@ -414,7 +416,7 @@ const svgHeight = computed(() => {
 .node-name {
   font-size: 13px;
   font-weight: 700;
-  fill: #1f2937;
+  fill: #0B1220;
   dominant-baseline: middle;
   pointer-events: none;
   user-select: none;
@@ -431,56 +433,14 @@ const svgHeight = computed(() => {
 
 .node-type {
   font-size: 9px;
-  fill: #9ca3af;
+  fill: #6b7280;
   dominant-baseline: middle;
   text-transform: capitalize;
   pointer-events: none;
   user-select: none;
 }
 
-/* Dark mode */
-:global(.dark) .flow-svg {
-  background: #1f2937;
-}
-
-:global(.dark) .process-flow-diagram {
-  background: linear-gradient(135deg, #1e293b 0%, #2d1b4e 50%, #3d2414 100%);
-}
-
-:global(.dark) .node-rect {
-  fill: #374151;
-  stroke: #60a5fa;
-}
-
-:global(.dark) .node-rect.operacion {
-  fill: #1e3a8a;
-  stroke: #60a5fa;
-}
-
-:global(.dark) .node-rect.inspeccion {
-  fill: #78350f;
-  stroke: #fbbf24;
-}
-
-:global(.dark) .node-name {
-  fill: #f3f4f6;
-}
-
-:global(.dark) .node-info {
-  fill: #9ca3af;
-}
-
-:global(.dark) .node-type {
-  fill: #6b7280;
-}
-
-:global(.dark) .node-shadow {
-  fill: rgba(0, 0, 0, 0.3);
-}
-
-:global(.dark) .connection-line {
-  stroke: #60a5fa;
-}
+/* Dark mode handled by Vuetify theme variables */
 
 /* Animación de expand/collapse */
 .expand-enter-active,
@@ -503,16 +463,28 @@ const svgHeight = computed(() => {
     min-height: 300px;
   }
 
-  .flow-svg {
-    min-height: 300px;
-  }
-
   .node-name {
-    font-size: 11px;
+    font-size: 13px;
+    font-weight: 700;
+    fill: var(--v-theme-on-surface);
+    dominant-baseline: middle;
+    pointer-events: none;
+    user-select: none;
   }
-
   .node-info {
-    font-size: 9px;
+    font-size: 11px;
+    font-weight: 500;
+    fill: var(--v-theme-secondary);
+    dominant-baseline: middle;
+    pointer-events: none;
+    user-select: none;
   }
-}
+  .node-type {
+    font-size: 9px;
+    fill: var(--v-theme-secondary);
+    dominant-baseline: middle;
+    text-transform: capitalize;
+    pointer-events: none;
+    user-select: none;
+  }}
 </style>

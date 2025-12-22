@@ -16,7 +16,7 @@
                 <input
                   v-model="form.nombre"
                   type="text"
-                  class="w-full px-4 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600"
+                  class="w-full px-4 py-2 border rounded-lg themed-input"
                   placeholder="Ej: Corte Puño, Costura Manga"
                   required
                 />
@@ -30,7 +30,7 @@
                   <label class="block text-sm font-medium mb-2">Tipo</label>
                   <select
                     v-model="form.tipo"
-                    class="w-full px-4 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600"
+                    class="w-full px-4 py-2 border rounded-lg themed-input"
                   >
                     <option value="operacion">Operación</option>
                     <option value="inspeccion">Inspección</option>
@@ -42,7 +42,7 @@
                   <input
                     v-model.number="form.orden"
                     type="number"
-                    class="w-full px-4 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600"
+                    class="w-full px-4 py-2 border rounded-lg themed-input"
                     required
                   />
                 </div>
@@ -55,7 +55,7 @@
                     v-model.number="form.cantidad_entrada"
                     type="number"
                     min="1"
-                    class="w-full px-4 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600"
+                    class="w-full px-4 py-2 border rounded-lg themed-input"
                     required
                   />
                   <p class="text-xs text-gray-500 mt-1">Ej: 2 si necesita 2 piezas de entrada</p>
@@ -67,7 +67,7 @@
                     v-model.number="form.cantidad_salida"
                     type="number"
                     min="1"
-                    class="w-full px-4 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600"
+                    class="w-full px-4 py-2 border rounded-lg themed-input"
                     required
                   />
                   <p class="text-xs text-gray-500 mt-1">Ej: 1 si produce 1 pieza de salida</p>
@@ -80,26 +80,29 @@
                   v-model.number="form.tiempo_estimado_minutos"
                   type="number"
                   min="1"
-                  class="w-full px-4 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600"
+                  class="w-full px-4 py-2 border rounded-lg themed-input"
                 />
               </div>
 
               <div>
                 <label class="block text-sm font-medium mb-2">Procesos de los que depende (Padres)</label>
                 <div class="space-y-2">
-                  <label v-for="nodo in nodosDisponibles" :key="nodo.id" class="flex items-center">
+                  <label v-for="nodo in nodosDisponiblesFiltrados" :key="nodo.id" class="flex items-center">
                     <input
                       type="checkbox"
                       :value="nodo.id"
                       v-model="form.dependencias"
                       class="mr-2"
                     />
-                    <span>{{ nodo.nombre }}</span>
+                    <span>{{ nodo.nombre }} (Orden: {{ nodo.orden }})</span>
                   </label>
+                  <p v-if="nodosDisponiblesFiltrados.length === 0" class="text-gray-500 text-sm">
+                    No hay procesos con orden menor disponibles
+                  </p>
                 </div>
                 <p class="text-xs text-gray-500 mt-2">
                   Selecciona los procesos cuyo resultado es necesario para este proceso.
-                  Ej: "Costura Manga Frente" depende de "Corte Manga" y "Corte Frente"
+                  Solo se muestran procesos con orden menor.
                 </p>
               </div>
 
@@ -107,13 +110,13 @@
                 <button
                   type="submit"
                   :disabled="form.processing"
-                  class="bg-blue-500 hover:bg-blue-700 disabled:opacity-50 text-white font-bold py-2 px-4 rounded"
+                  class="themed-action"
                 >
                   Guardar Proceso
                 </button>
                 <Link
                   :href="route('admin.proceso-nodos.index', tipoPrenda.id)"
-                  class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded"
+                  class="themed-cancel"
                 >
                   Cancelar
                 </Link>
@@ -127,6 +130,7 @@
 </template>
 
 <script setup>
+import { computed } from 'vue';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Link, useForm } from '@inertiajs/vue3';
 
@@ -143,6 +147,13 @@ const form = useForm({
   cantidad_salida: 1,
   tiempo_estimado_minutos: null,
   dependencias: [],
+});
+
+// Filtrar solo procesos con orden menor al actual
+const nodosDisponiblesFiltrados = computed(() => {
+  const ordenActual = Number(form.orden);
+  if (ordenActual <= 0) return [];
+  return props.nodosDisponibles.filter(nodo => Number(nodo.orden) < ordenActual);
 });
 
 const submit = () => {
