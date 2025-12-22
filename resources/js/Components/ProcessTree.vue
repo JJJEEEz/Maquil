@@ -249,7 +249,6 @@ const svgHeight = computed(() => {
   justify-content: space-between;
   align-items: center;
   padding: 1rem;
-  background: linear-gradient(135deg, #f0f9ff 0%, #f3e8ff 50%, #fef3c7 100%);
   border-radius: 0.75rem 0.75rem 0 0;
   border-bottom: 1px solid rgba(0, 0, 0, 0.1);
 }
