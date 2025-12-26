@@ -118,12 +118,15 @@ export default {
             <v-list>
                 <v-list-subheader>Cadena de producción</v-list-subheader>
                 <v-list-item v-if="canViewOrdenes">
-                    <Link :href="route('admin.ordenes.index')">Ordenes de producción</Link>
+                    <Link :href="route('admin.ordenes.index')">
+                        <v-icon class="me-2">mdi-basket</v-icon>
+                        Ordenes de producción
+                    </Link>
                 </v-list-item>
                 <v-list-item v-if="canOperadorDashboard">
                     <Link :href="route('operador.dashboard')">
-                        <v-icon class="me-2">mdi-worker</v-icon>
-                        Mi Panel de Operador
+                        <v-icon class="me-2">mdi-hard-hat</v-icon>
+                        Panel de Operador
                     </Link>
                 </v-list-item>
                 <v-list-subheader v-if="canViewTiposPrendas || canViewUsers || canViewRoles" >Panel de Administración</v-list-subheader>
@@ -134,13 +137,22 @@ export default {
                     </Link>
                 </v-list-item>
                 <v-list-item v-if="canViewTiposPrendas">
-                    <Link :href="route('admin.tipos-prendas.index')">Diagrama de Procesos</Link>
+                    <Link :href="route('admin.tipos-prendas.index')">
+                        <v-icon class="me-2">mdi-sitemap</v-icon>
+                        Diagrama de Procesos
+                    </Link>
                 </v-list-item>
                 <v-list-item v-if="canViewUsers">
-                    <Link :href="route('admin.users.index')">Usuarios</Link>
+                    <Link :href="route('admin.users.index')">
+                        <v-icon class="me-2">mdi-account-multiple</v-icon>
+                        Usuarios
+                    </Link>
                 </v-list-item>
                 <v-list-item v-if="canViewRoles">
-                    <Link :href="route('admin.roles.index')">Roles</Link>
+                    <Link :href="route('admin.roles.index')">
+                        <v-icon class="me-2">mdi-shield-account</v-icon>
+                        Roles
+                    </Link>
                 </v-list-item>
             </v-list>
         </v-navigation-drawer>
