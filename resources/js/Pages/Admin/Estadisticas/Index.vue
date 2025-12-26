@@ -236,14 +236,6 @@ const props = defineProps({
 // Inicializar selectedLoteByOrden con un objeto reactivo
 const selectedLoteByOrden = ref({});
 
-// Watcher para debuggear cambios
-watch(
-  () => selectedLoteByOrden.value,
-  (newVal) => {
-    console.log('selectedLoteByOrden actualizado:', newVal);
-  },
-  { deep: true }
-);
 
 const formatDate = (date) => {
   if (!date) return '-';
@@ -308,28 +300,16 @@ const getOrdenProgress = (orden) => {
 
 const onLoteSelected = (ordenId) => {
   const loteSeleccionado = selectedLoteByOrden.value[ordenId];
-  console.log(`Lote seleccionado para orden ${ordenId}:`, loteSeleccionado);
-  console.log('¿Tiene loteProcesoProgresos?', loteSeleccionado?.loteProcesoProgresos);
 };
 
 const getLoteProgresos = (orden, loteSeleccionado) => {
   if (!loteSeleccionado || !loteSeleccionado.id) {
-    console.log('Sin lote seleccionado');
     return [];
   }
   
-  console.log('===== DEBUG getLoteProgresos =====');
-  console.log('Orden:', orden.id);
-  console.log('Lotes en orden:', orden.lotes);
-  console.log('Lote seleccionado:', loteSeleccionado);
-  console.log('Buscando lote con ID:', loteSeleccionado.id);
   
   // Buscar el lote completo en orden.lotes para obtener sus progresos
   const loteFull = orden.lotes.find(l => l.id === loteSeleccionado.id);
-  console.log('Lote encontrado:', loteFull);
-  console.log('loteProcesoProgresos:', loteFull?.loteProcesoProgresos);
-  console.log('lote_proceso_progresos:', loteFull?.lote_proceso_progresos);
-  console.log('Cantidad de progresos:', loteFull?.loteProcesoProgresos?.length || loteFull?.lote_proceso_progresos?.length || 0);
   
   return loteFull?.loteProcesoProgresos || loteFull?.lote_proceso_progresos || [];
 };

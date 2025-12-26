@@ -26,8 +26,7 @@ const submit = () => {
     form.post(route('login'), {
         onFinish: () => form.reset('password'),
         onError: (errors) => {
-            // Log errors to the browser console for debugging
-            console.log('Inertia form errors:', errors);
+            console.error('Login error:', errors);
         },
     });
 };

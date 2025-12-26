@@ -141,13 +141,6 @@ const props = defineProps({
   lote: Object,
 });
 
-onMounted(() => {
-  console.log('Lote completo:', props.lote);
-  console.log('Progresos:', props.lote?.lote_proceso_progresos);
-  console.log('Orden:', props.lote?.orden);
-  console.log('Tipo Prenda:', props.lote?.orden?.tipo_prenda);
-  console.log('¿Tiene tipo_prenda_id?:', props.lote?.orden?.tipo_prenda_id);
-});
 
 const formatDate = (date) => {
   return new Date(date).toLocaleDateString('es-ES');

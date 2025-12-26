@@ -50,14 +50,11 @@ export default {
         // window.toggleDarkMode = this.toggleDarkMode;
         try {
             // Temporal: logear permisos compartidos para debug
-            // Elimina este console.log cuando confirmes que funciona
-                        console.log('authPermissions (shared):', JSON.parse(JSON.stringify(this.$page && this.$page.props ? this.$page.props.authPermissions : [])));
                         // Watch for changes when Inertia navigates and props update
                         if (this.$watch) {
                             this.$watch(() => this.$page && this.$page.props ? this.$page.props.authPermissions : [], (val) => {
                                 try {
-                                    console.log('authPermissions (changed):', JSON.parse(JSON.stringify(val || [])));
-                                } catch (e) { console.log('authPermissions (changed):', val); }
+                                } catch (e) {}
                             });
                             // Watch drawer state changes
                             this.$watch(() => this.drawer, (newVal) => {

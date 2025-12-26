@@ -28,20 +28,6 @@ const canEdit = computed(() => authPermissions.value.includes('ordenes.edit'));
 const canDelete = computed(() => authPermissions.value.includes('ordenes.delete'));
 const canViewLotes = computed(() => authPermissions.value.includes('lotes.view'));
 
-onMounted(() => {
-  try {
-    console.log('authPermissions (shared):', JSON.parse(JSON.stringify(authPermissions.value || [])));
-    watch(authPermissions, (val) => {
-      try {
-        console.log('authPermissions (changed):', JSON.parse(JSON.stringify(val || [])));
-      } catch (e) {
-        console.log('authPermissions (changed):', val);
-      }
-    });
-  } catch (e) {
-    // ignore
-  }
-});
 
 
 const headers = [
