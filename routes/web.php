@@ -135,6 +135,9 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
     Route::get('dashboard', function () {
         return Inertia::render('Admin/Dashboard/index');
     })->name('dashboard.index');
+
+    // Estadísticas routes
+    Route::get('estadisticas', [\App\Http\Controllers\Admin\EstadisticasController::class, 'index'])->name('estadisticas.index')->middleware('role:admin');
 });
 
 // Operador routes

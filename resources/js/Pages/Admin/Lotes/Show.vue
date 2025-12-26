@@ -1,7 +1,7 @@
 <template>
   <AuthenticatedLayout>
     <v-card class="p-6">
-      <v-card-title class="d-flex justify-space-between align-center">
+      <v-card-title class="d-flex flex-col md:flex-row justify-space-between align-start md:align-center gap-4">
         <div>
           <h1 class="text-xl mb-1 font-semibold">Detalle del Lote #{{ lote.id }}</h1>
           <div class="text-sm">Orden: {{ lote.orden.name }} | Cliente: {{ lote.orden.client }}</div>
@@ -21,7 +21,7 @@
 
       <v-card-text>
         <!-- Información General -->
-        <div class="grid grid-cols-4 gap-4 mb-6">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
           <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg p-6">
             <div class="text-sm text-gray-600 dark:text-gray-400">Fecha</div>
             <div class="text-2xl font-bold">{{ formatDate(lote.fecha) }}</div>
@@ -45,7 +45,7 @@
         <!-- Progreso por Proceso -->
         <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
           <div class="p-6">
-            <div class="d-flex justify-space-between align-center mb-4">
+            <div class="d-flex flex-col md:flex-row justify-space-between align-start md:align-center gap-4 mb-4">
               <h3 class="text-lg font-semibold">Progreso por Proceso</h3>
               <Link v-if="(!lote.lote_proceso_progresos || lote.lote_proceso_progresos.length === 0) && lote.orden?.tipo_prenda_id" 
                     :href="route('admin.lotes.initializeProcesos', lote.id)" 
@@ -55,7 +55,7 @@
               </Link>
             </div>
             <div v-if="!lote.orden?.tipo_prenda_id" class="text-center py-8">
-              <div class="text-red-600 font-semibold mb-2">⚠️ La orden no tiene un tipo de prenda asignado</div>
+              <div class="text-red-600 font-semibold mb-2">La orden no tiene un tipo de prenda asignado</div>
               <div class="text-gray-600 text-sm">
                 Para poder crear procesos, primero debes asignar un tipo de prenda a la orden.
                 <Link :href="route('admin.ordenes.edit', lote.orden.id)" class="text-blue-600 underline">Editar orden</Link>
@@ -87,7 +87,7 @@
                   </Link>
                 </div>
 
-                <div class="grid grid-cols-4 gap-2 text-sm mb-3">
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-sm mb-3">
                   <div>
                     <span class="text-gray-600">Completadas:</span>
                     <div class="font-bold">{{ progreso.cantidad_completada }} / {{ progreso.cantidad_objetivo }}</div>

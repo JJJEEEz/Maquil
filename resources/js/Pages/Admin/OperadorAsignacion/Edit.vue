@@ -1,7 +1,7 @@
 <template>
   <AuthenticatedLayout>
     <v-card class="p-6">
-      <v-card-title class="d-flex justify-space-between align-center">
+      <v-card-title class="d-flex flex-col md:flex-row justify-space-between align-start md:align-center gap-4">
         <div>
           <h1 class="text-2xl mb-2 font-semibold">Asignar Operadores</h1>
           <p class="text-gray-600 text-sm">
@@ -28,7 +28,7 @@
         <v-card class="mb-6">
           <v-card-title>Información del Proceso</v-card-title>
           <v-card-text>
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
               <div>
                 <p class="text-xs text-gray-600 mb-1">Orden</p>
                 <p class="font-semibold">{{ progreso.lote?.orden?.name || 'N/A' }}</p>

@@ -1,7 +1,7 @@
 <template>
   <AuthenticatedLayout>
     <v-card class="p-6">
-      <v-card-title class="d-flex justify-space-between align-center">
+      <v-card-title class="d-flex flex-col md:flex-row justify-space-between align-start md:align-center gap-4">
         <div>
           <h1 class="text-2xl mb-2 font-semibold">{{ procesoNodo.nombre }}</h1>
           <p class="text-gray-600 text-sm">Orden: {{ orden.name }} | Cliente: {{ orden.client }}</p>
@@ -15,7 +15,7 @@
 
       <v-card-text>
         <!-- Información de la Orden -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
           <v-card class="p-4">
             <div class="text-xs text-gray-600 mb-1">Orden</div>
             <div class="text-lg font-bold">{{ orden.name }}</div>
@@ -38,7 +38,7 @@
         <v-card class="mb-6">
           <v-card-title>Progreso Actual</v-card-title>
           <v-card-text>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-4">
               <div>
                 <p class="text-xs text-gray-600 mb-2">Completadas</p>
                 <p class="text-3xl font-bold text-green-600">{{ progreso.cantidad_completada }}</p>
@@ -81,7 +81,7 @@
           <v-card-title>Registrar Progreso</v-card-title>
           <v-card-text>
             <form @submit.prevent="registrarProgreso" class="space-y-4">
-              <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <v-text-field
                   v-model.number="form.cantidad_completada"
                   label="Prendas Completadas"
@@ -117,7 +117,7 @@
                 :error-messages="form.errors.notas ? [form.errors.notas] : []"
               />
 
-              <div class="flex gap-4">
+              <div class="flex flex-col sm:flex-row gap-4">
                 <v-btn
                   type="submit"
                   color="primary"

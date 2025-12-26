@@ -284,11 +284,6 @@ const errors = computed(() => {
                       <v-icon>mdi-eye</v-icon>
                     </v-btn>
                   </Link>
-                  <Link v-if="canRegistrarProcesos" :href="route('operador.lotes.dashboard', item.id)">
-                    <v-btn icon color="secondary" size="small" title="Dashboard">
-                      <v-icon>mdi-chart-box</v-icon>
-                    </v-btn>
-                  </Link>
                   <v-btn v-if="canEditLote" icon color="primary" size="small" @click.prevent="openEditLote(item)">
                     <v-icon>mdi-pencil</v-icon>
                   </v-btn>

@@ -11,6 +11,13 @@ export default {
             darkMode: false,
     };
   },
+  created() {
+    // Restaurar estado del drawer desde localStorage
+    const savedDrawer = localStorage.getItem('sidebarDrawer');
+    if (savedDrawer !== null) {
+      this.drawer = savedDrawer === 'true';
+    }
+  },
     computed: {
         authPermissions() {
             return (this.$page && this.$page.props && this.$page.props.authPermissions) ? this.$page.props.authPermissions : [];
@@ -33,6 +40,9 @@ export default {
         canOperadorDashboard() {
             return this.authPermissions.includes('operador.dashboard');
         },
+        isAdmin() {
+            return this.$page && this.$page.props && this.$page.props.auth && this.$page.props.auth.user && this.$page.props.auth.user.roles && this.$page.props.auth.user.roles.some(r => r.name === 'admin');
+        },
     },
     mounted() {
         this.initDarkMode();
@@ -48,6 +58,12 @@ export default {
                                 try {
                                     console.log('authPermissions (changed):', JSON.parse(JSON.stringify(val || [])));
                                 } catch (e) { console.log('authPermissions (changed):', val); }
+                            });
+                            // Watch drawer state changes
+                            this.$watch(() => this.drawer, (newVal) => {
+                                try {
+                                    localStorage.setItem('sidebarDrawer', newVal ? 'true' : 'false');
+                                } catch (e) {}
                             });
                         }
         } catch (e) {
@@ -114,6 +130,12 @@ export default {
                     </Link>
                 </v-list-item>
                 <v-list-subheader v-if="canViewTiposPrendas || canViewUsers || canViewRoles" >Panel de Administración</v-list-subheader>
+                <v-list-item v-if="isAdmin">
+                    <Link :href="route('admin.estadisticas.index')">
+                        <v-icon class="me-2">mdi-chart-line</v-icon>
+                        Estadísticas
+                    </Link>
+                </v-list-item>
                 <v-list-item v-if="canViewTiposPrendas">
                     <Link :href="route('admin.tipos-prendas.index')">Diagrama de Procesos</Link>
                 </v-list-item>
