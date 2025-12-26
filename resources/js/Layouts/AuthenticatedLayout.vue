@@ -113,7 +113,7 @@ export default {
                         Mi Panel de Operador
                     </Link>
                 </v-list-item>
-                <v-list-subheader>Panel de Administración</v-list-subheader>
+                <v-list-subheader v-if="canViewTiposPrendas || canViewUsers || canViewRoles" >Panel de Administración</v-list-subheader>
                 <v-list-item v-if="canViewTiposPrendas">
                     <Link :href="route('admin.tipos-prendas.index')">Diagrama de Procesos</Link>
                 </v-list-item>
@@ -122,9 +122,6 @@ export default {
                 </v-list-item>
                 <v-list-item v-if="canViewRoles">
                     <Link :href="route('admin.roles.index')">Roles</Link>
-                </v-list-item>
-                <v-list-item>
-                    <Link :href="route('admin.dashboard.index')">Estadisticas</Link>
                 </v-list-item>
             </v-list>
         </v-navigation-drawer>

@@ -22,7 +22,7 @@
           </v-card>
           <v-card class="p-4">
             <div class="text-xs text-gray-600 mb-1">Tipo de Prenda</div>
-            <div class="text-lg font-bold">{{ orden.tipoPrenda?.nombre || 'N/A' }}</div>
+            <div class="text-lg font-bold">{{ orden?.tipoPrenda?.nombre || progreso?.lote?.orden?.tipoPrenda?.nombre || 'N/A' }}</div>
           </v-card>
           <v-card class="p-4">
             <div class="text-xs text-gray-600 mb-1">Cliente</div>

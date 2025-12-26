@@ -11,23 +11,22 @@ class OperadorController extends Controller
 {
     /**
      * Dashboard principal del operador
-     * Muestra sus asignaciones actuales
+     * Muestra sus asignaciones actuales (o todas si es admin)
      */
     public function dashboard()
     {
         $user = auth()->user();
+        $isAdmin = $user->hasRole('admin');
         
-        // Obtener asignaciones actuales del operador
-        $asignaciones = OperadorAsignacion::where('user_id', $user->id)
-            ->with([
+        if ($isAdmin) {
+            // Admin ve todos los procesos
+            $asignaciones = OperadorAsignacion::with([
                 'procesoNodo',
                 'procesoNodo.tipoPrenda',
             ])
             ->get();
 
-        // Obtener progresos asociados a las asignaciones
-        $progresos = LoteProcesoProgreso::whereIn('proceso_nodo_id', $asignaciones->pluck('proceso_nodo_id'))
-            ->with([
+            $progresos = LoteProcesoProgreso::with([
                 'lote',
                 'lote.orden',
                 'lote.orden.tipoPrenda',
@@ -36,6 +35,26 @@ class OperadorController extends Controller
             ])
             ->where('estado', '!=', 'completado')
             ->get();
+        } else {
+            // Operador ve solo sus asignaciones
+            $asignaciones = OperadorAsignacion::where('user_id', $user->id)
+                ->with([
+                    'procesoNodo',
+                    'procesoNodo.tipoPrenda',
+                ])
+                ->get();
+
+            $progresos = LoteProcesoProgreso::whereIn('proceso_nodo_id', $asignaciones->pluck('proceso_nodo_id'))
+                ->with([
+                    'lote',
+                    'lote.orden',
+                    'lote.orden.tipoPrenda',
+                    'procesoNodo',
+                    'procesoNodo.tipoPrenda',
+                ])
+                ->where('estado', '!=', 'completado')
+                ->get();
+        }
 
         return Inertia::render('Operador/Dashboard', [
             'asignaciones' => $asignaciones,
@@ -46,32 +65,49 @@ class OperadorController extends Controller
     /**
      * Vista de un proceso específico asignado al operador
      */
-    public function mostrarProceso(LoteProcesoProgreso $progreso)
+    public function mostrarProceso($progresoId)
     {
         $user = auth()->user();
-
-        // Verificar que el operador tiene asignación para este proceso
-        $asignacion = OperadorAsignacion::where('user_id', $user->id)
-            ->where('proceso_nodo_id', $progreso->proceso_nodo_id)
-            ->first();
-
-        if (!$asignacion) {
-            abort(403, 'No tienes asignación para este proceso');
+        $isAdmin = $user->hasRole('admin');
+        
+        // Buscar el progreso
+        $progreso = LoteProcesoProgreso::find($progresoId);
+        if (!$progreso) {
+            abort(404, 'Progreso no encontrado');
         }
 
+        // Si no es admin, verificar que el operador tiene asignación para este proceso
+        if (!$isAdmin) {
+            $asignacion = OperadorAsignacion::where('user_id', $user->id)
+                ->where('proceso_nodo_id', $progreso->proceso_nodo_id)
+                ->first();
+
+            if (!$asignacion) {
+                abort(403, 'No tienes asignación para este proceso');
+            }
+        }
+
+        // Cargar todas las relaciones
         $progreso->load([
             'lote',
             'lote.orden',
             'lote.orden.tipoPrenda',
             'procesoNodo',
+            'procesoNodo.tipoPrenda',
             'registradoPor',
         ]);
 
+        // Preparar datos para enviar
+        $orden = $progreso->lote->orden;
+        $tipoPrenda = $orden->tipoPrenda;
+        
         return Inertia::render('Operador/ProcesoDetalle', [
             'progreso' => $progreso,
             'procesoNodo' => $progreso->procesoNodo,
             'lote' => $progreso->lote,
-            'orden' => $progreso->lote->orden,
+            'orden' => array_merge($orden->toArray(), [
+                'tipoPrenda' => $tipoPrenda ? $tipoPrenda->toArray() : null
+            ]),
         ]);
     }
 

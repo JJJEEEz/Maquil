@@ -2,16 +2,20 @@
 import { computed } from 'vue';
 import { useForm } from '@inertiajs/vue3';
 import axios from 'axios';
-import Input from '@/Components/UI/Input.vue';
-import Button from '@/Components/UI/Button.vue';
-import SecondaryButton from '@/Components/SecondaryButton.vue';
-import DatePicker from '@/Components/DatePicker.vue';
 import { Head } from '@inertiajs/vue3';
 
 const incoming = defineProps({ orden: Object, tiposPrendas: Array });
 const emit = defineEmits(['saved', 'close']);
 
 const isEdit = computed(() => !!incoming.orden && incoming.orden !== null);
+
+const tiposPrendasOptions = computed(() => {
+  if (!incoming.tiposPrendas) return [];
+  return incoming.tiposPrendas.map(tp => ({
+    title: tp.nombre,
+    value: tp.id
+  }));
+});
 
 const form = useForm({
   name: incoming.orden ? incoming.orden.name : '',
@@ -32,16 +36,13 @@ const allowedDates = (val) => {
 
 function submit() {
   if (isEdit.value) {
-    // Use axios for XHR to avoid Inertia redirect issues
     const payload = {
       name: form.name,
       description: form.description,
       client: form.client,
       quality: form.quality,
       status: form.status,
-      // coerce quantity to integer or null to satisfy integer|min:0 validation
       target_quantity: (form.target_quantity === '' || form.target_quantity === null) ? null : Number(form.target_quantity),
-      // send null when empty to satisfy nullable|date rules on server
       target_date: form.target_date && String(form.target_date).trim() !== '' ? form.target_date : null,
       tipo_prenda_id: form.tipo_prenda_id ? Number(form.tipo_prenda_id) : null,
     };
@@ -86,7 +87,6 @@ function submit() {
       });
   }
 }
-// Expose methods and state so parent (Modal) can render footer buttons
 defineExpose({
   submitForm: submit,
   closeForm: () => emit('close'),
@@ -97,50 +97,88 @@ defineExpose({
 <template>
   <Head title="Ordenes" />
   <div class="p-6">
-    <h2 class="text-lg font-semibold mb-4">{{ isEdit ? 'Editar Orden' : 'Crear Orden' }}</h2>
+    <h2 class="text-lg font-semibold mb-6">{{ isEdit ? 'Editar Orden' : 'Crear Orden' }}</h2>
     <form @submit.prevent="submit">
-      <Input v-model="form.name" label="Nombre" :error="!!form.errors.name" :error-messages="form.errors.name" />
-      <div class="mt-4">
-        <label class="block font-medium">Tipo de Prenda</label>
-        <select
-          v-model="form.tipo_prenda_id"
-          class="w-full border border-gray-300 rounded px-3 py-2 mt-2"
-          :class="{ 'border-red-500': form.errors.tipo_prenda_id }"
-        >
-          <option value="">Seleccionar tipo de prenda...</option>
-          <option v-for="tp in tiposPrendas" :key="tp.id" :value="tp.id">{{ tp.nombre }}</option>
-        </select>
-        <div v-if="form.errors.tipo_prenda_id" class="text-red-600 text-sm mt-1">
-          <div v-if="Array.isArray(form.errors.tipo_prenda_id)" v-for="(err, i) in form.errors.tipo_prenda_id" :key="i">{{ err }}</div>
-          <div v-else>{{ form.errors.tipo_prenda_id }}</div>
-        </div>
-      </div>
-      <Input v-model="form.client" label="Cliente" :error="!!form.errors.client" :error-messages="form.errors.client" />
-      <div>
-        <DatePicker
-          v-model="form.target_date"
-          :allowed-dates="allowedDates"
-          label="Fecha objetivo"
-          :error="!!form.errors.target_date"
-          :error-messages="form.errors.target_date"
-        />
-      </div>
-      <Input v-model="form.target_quantity" type="number" label="Cantidad objetivo" :error="!!form.errors.target_quantity" :error-messages="form.errors.target_quantity" />
-      <Input v-if="isEdit" v-model="form.quality" label="Calidad" :error="!!form.errors.quality" :error-messages="form.errors.quality" />
+      <v-row>
+        <v-col cols="12" md="6">
+          <v-text-field
+            v-model="form.name"
+            label="Nombre"
+            outlined
+            dense
+            :error-messages="form.errors.name"
+          />
+        </v-col>
+        <v-col cols="12" md="6">
+          <label class="block text-sm font-medium mb-2">Tipo de Prenda</label>
+          <select
+            v-model="form.tipo_prenda_id"
+            class="w-full px-3 py-2 border border-gray-300 rounded outline-none focus:ring-2 focus:ring-blue-500"
+            :class="{ 'border-red-500': form.errors.tipo_prenda_id }"
+          >
+            <option v-for="item in tiposPrendasOptions" :key="item.value" :value="item.value">
+              {{ item.title }}
+            </option>
+          </select>
+          <div v-if="form.errors.tipo_prenda_id" class="text-red-600 text-sm mt-1">{{ form.errors.tipo_prenda_id }}</div>
+        </v-col>
+      </v-row>
 
-      <label class="block font-medium">Descripción</label>
-      <textarea
-        v-model="form.description"
-        rows="4"
-        class="w-full border border-gray-300 rounded px-3 py-2 mt-2"
-        placeholder="Descripción"
-      />
-      <div v-if="form.errors.description" class="text-red-600 text-sm mt-1">
-        <div v-if="Array.isArray(form.errors.description)" v-for="(err, i) in form.errors.description" :key="i">{{ err }}</div>
-        <div v-else>{{ form.errors.description }}</div>
-      </div>
+      <v-row>
+        <v-col cols="12" md="6">
+          <v-text-field
+            v-model="form.client"
+            label="Cliente"
+            outlined
+            dense
+            :error-messages="form.errors.client"
+          />
+        </v-col>
+        <v-col cols="12" md="6">
+          <v-text-field
+            v-model="form.target_date"
+            label="Fecha objetivo"
+            type="date"
+            outlined
+            dense
+            :error-messages="form.errors.target_date"
+          />
+        </v-col>
+      </v-row>
 
-      <!-- footer moved to Modal's footer slot -->
+      <v-row>
+        <v-col cols="12" md="6">
+          <v-text-field
+            v-model.number="form.target_quantity"
+            label="Cantidad objetivo"
+            type="number"
+            outlined
+            dense
+            :error-messages="form.errors.target_quantity"
+          />
+        </v-col>
+        <v-col v-if="isEdit" cols="12" md="6">
+          <v-text-field
+            v-model="form.quality"
+            label="Calidad"
+            outlined
+            dense
+            :error-messages="form.errors.quality"
+          />
+        </v-col>
+      </v-row>
+
+      <v-row>
+        <v-col cols="12">
+          <v-textarea
+            v-model="form.description"
+            label="Descripción"
+            outlined
+            rows="4"
+            :error-messages="form.errors.description"
+          />
+        </v-col>
+      </v-row>
     </form>
   </div>
 </template>
