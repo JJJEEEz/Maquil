@@ -64,7 +64,7 @@
             <div v-else-if="!lote.lote_proceso_progresos || lote.lote_proceso_progresos.length === 0" class="text-center py-8 text-gray-500">
               No hay procesos registrados para este lote. Haz clic en "Inicializar Procesos" para crearlos automáticamente.
             </div>
-            <div v-else class="space-y-4">
+            <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               <div v-for="progreso in lote.lote_proceso_progresos" :key="progreso.id" class="border rounded-lg p-4">
                 <div class="flex justify-between items-start mb-2">
                   <div>
@@ -76,6 +76,15 @@
                   <span :class="getEstadoProgresoClass(progreso.estado)" class="px-2 py-1 rounded text-sm">
                     {{ progreso.estado }}
                   </span>
+                </div>
+
+                <!-- Botón para asignar operador -->
+                <div class="mb-3">
+                  <Link :href="route('admin.operador-asignacion.edit', progreso.id)">
+                    <v-btn color="secondary" size="x-small" variant="outlined" class="w-full mb-2">
+                      Asignar Operador
+                    </v-btn>
+                  </Link>
                 </div>
 
                 <div class="grid grid-cols-4 gap-2 text-sm mb-3">

@@ -114,6 +114,24 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
     Route::put('lotes/{lote}/estado-trabajo', [\App\Http\Controllers\LoteController::class, 'updateEstadoTrabajo'])->name('lotes.updateEstadoTrabajo')->middleware('permission:lotes.edit');
     Route::post('lotes/{lote}/inicializar-procesos', [\App\Http\Controllers\LoteController::class, 'initializeProcesos'])->name('lotes.initializeProcesos')->middleware('permission:lotes.edit');
 
+    // Operador Asignación routes
+    Route::get('progreso/{progreso}/asignar-operador', [\App\Http\Controllers\Admin\OperadorAsignacionController::class, 'edit'])
+        ->name('operador-asignacion.edit')
+        ->middleware('permission:ordenes.edit')
+        ->where('progreso', '[0-9]+');
+    Route::post('progreso/{progreso}/asignar-operador', [\App\Http\Controllers\Admin\OperadorAsignacionController::class, 'assignOperador'])
+        ->name('operador-asignacion.assign')
+        ->middleware('permission:ordenes.edit')
+        ->where('progreso', '[0-9]+');
+    Route::post('progreso/{progreso}/remover-operador', [\App\Http\Controllers\Admin\OperadorAsignacionController::class, 'removeOperador'])
+        ->name('operador-asignacion.remove')
+        ->middleware('permission:ordenes.edit')
+        ->where('progreso', '[0-9]+');
+    Route::get('progreso/{progreso}/operadores-asignados', [\App\Http\Controllers\Admin\OperadorAsignacionController::class, 'getAsignados'])
+        ->name('operador-asignacion.getAsignados')
+        ->middleware('permission:ordenes.view')
+        ->where('progreso', '[0-9]+');
+
     Route::get('dashboard', function () {
         return Inertia::render('Admin/Dashboard/index');
     })->name('dashboard.index');
@@ -121,6 +139,12 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
 
 // Operador routes
 Route::middleware(['auth'])->prefix('operador')->name('operador.')->group(function () {
+    Route::get('dashboard', [\App\Http\Controllers\OperadorController::class, 'dashboard'])->name('dashboard')->middleware('permission:operador.dashboard');
+    Route::get('proceso/{progreso}', [\App\Http\Controllers\OperadorController::class, 'mostrarProceso'])->name('proceso.detalle')->middleware('permission:operador.registrar');
+    Route::post('progreso/{progreso}/registrar', [\App\Http\Controllers\OperadorController::class, 'registrarPrendas'])->name('progreso.registrar')->middleware('permission:operador.registrar');
+    Route::post('progreso/{progreso}/completar', [\App\Http\Controllers\OperadorController::class, 'completarProceso'])->name('progreso.completar')->middleware('permission:operador.registrar');
+    
+    // Rutas antiguas (mantenerlas por compatibilidad)
     Route::get('lotes/{lote}/dashboard', [\App\Http\Controllers\LoteController::class, 'dashboard'])->name('lotes.dashboard')->middleware('permission:procesos.registrar');
     Route::get('lotes/{lote}/progreso', [\App\Http\Controllers\LoteProcesoProgresoController::class, 'show'])->name('progreso.show')->middleware('permission:procesos.registrar');
     Route::post('lotes/{lote}/progreso', [\App\Http\Controllers\LoteProcesoProgresoController::class, 'store'])->name('progreso.store')->middleware('permission:procesos.registrar');

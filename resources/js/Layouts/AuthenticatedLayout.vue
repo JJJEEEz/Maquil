@@ -30,6 +30,9 @@ export default {
         canRegistrarProcesos() {
             return this.authPermissions.includes('procesos.registrar');
         },
+        canOperadorDashboard() {
+            return this.authPermissions.includes('operador.dashboard');
+        },
     },
     mounted() {
         this.initDarkMode();
@@ -104,6 +107,12 @@ export default {
                 <v-list-item v-if="canViewOrdenes">
                     <Link :href="route('admin.ordenes.index')">Ordenes de producción</Link>
                 </v-list-item>
+                <v-list-item v-if="canOperadorDashboard">
+                    <Link :href="route('operador.dashboard')">
+                        <v-icon class="me-2">mdi-worker</v-icon>
+                        Mi Panel de Operador
+                    </Link>
+                </v-list-item>
                 <v-list-subheader>Panel de Administración</v-list-subheader>
                 <v-list-item v-if="canViewTiposPrendas">
                     <Link :href="route('admin.tipos-prendas.index')">Diagrama de Procesos</Link>
@@ -123,11 +132,11 @@ export default {
         <v-app-bar app color="surface" elevate-on-scroll>
             <v-app-bar-nav-icon @click="drawer = !drawer" />
             <v-toolbar-title>Maquil</v-toolbar-title>
-            <!-- <v-spacer />
+            <v-spacer />
             <v-btn icon title="Toggle dark mode" @click="toggleDarkMode">
                 <v-icon v-if="!darkMode">mdi-weather-night</v-icon>
                 <v-icon v-else>mdi-white-balance-sunny</v-icon>
-            </v-btn> -->
+            </v-btn>
             <v-menu>
                 <template #activator="{ props }">
                     <v-btn v-bind="props" text>

@@ -8,49 +8,51 @@
 
     <div class="py-12">
       <div class="max-w-4xl mx-auto sm:px-6 lg:px-8">
-        <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
-          <div class="p-6 text-gray-900 dark:text-gray-100">
+        <v-card class="shadow-sm">
+          <v-card-title>Editar Información</v-card-title>
+          <v-card-text>
             <form @submit.prevent="submit" class="space-y-6">
               <div>
-                <label class="block text-sm font-medium mb-2">Nombre</label>
-                <input
+                <v-text-field
                   v-model="form.nombre"
-                  type="text"
-                  class="w-full px-4 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600"
+                  label="Nombre"
+                  variant="outlined"
+                  :error-messages="form.errors.nombre ? [form.errors.nombre] : []"
                   required
+                  class="mb-4"
                 />
-                <div v-if="form.errors.nombre" class="text-red-500 text-sm mt-1">
-                  {{ form.errors.nombre }}
-                </div>
               </div>
 
               <div>
-                <label class="block text-sm font-medium mb-2">Descripción</label>
-                <textarea
+                <v-textarea
                   v-model="form.descripcion"
-                  class="w-full px-4 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600"
+                  label="Descripción"
+                  variant="outlined"
                   rows="4"
-                ></textarea>
+                  class="mb-4"
+                />
               </div>
 
               <div class="flex gap-4">
-                <button
+                <v-btn
                   type="submit"
+                  color="primary"
+                  :loading="form.processing"
                   :disabled="form.processing"
-                  class="bg-blue-500 hover:bg-blue-700 disabled:opacity-50 text-white font-bold py-2 px-4 rounded"
                 >
                   Guardar Cambios
-                </button>
-                <Link
+                </v-btn>
+                <v-btn
                   :href="route('admin.tipos-prendas.index')"
-                  class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded"
+                  color="secondary"
+                  variant="outlined"
                 >
                   Cancelar
-                </Link>
+                </v-btn>
               </div>
             </form>
-          </div>
-        </div>
+          </v-card-text>
+        </v-card>
       </div>
     </div>
   </AuthenticatedLayout>
@@ -58,7 +60,8 @@
 
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import { Link, useForm } from '@inertiajs/vue3';
+import { useForm, router } from '@inertiajs/vue3';
+import { ref } from 'vue';
 
 const props = defineProps({
   tipoPrenda: Object,
@@ -70,6 +73,13 @@ const form = useForm({
 });
 
 const submit = () => {
-  form.put(route('admin.tipos-prendas.update', props.tipoPrenda.id));
+  form.put(route('admin.tipos-prendas.update', props.tipoPrenda.id), {
+    onSuccess: () => {
+      router.visit(route('admin.tipos-prendas.index'));
+    },
+    onError: (errors) => {
+      console.error('Error al guardar:', errors);
+    }
+  });
 };
 </script>

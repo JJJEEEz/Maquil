@@ -11,13 +11,15 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('proceso_nodo_dependencies', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('proceso_nodo_id')->constrained('proceso_nodos')->onDelete('cascade');
-            $table->foreignId('padre_proceso_nodo_id')->constrained('proceso_nodos')->onDelete('cascade');
-            $table->timestamps();
-            $table->unique(['proceso_nodo_id', 'padre_proceso_nodo_id']);
-        });
+        if (!Schema::hasTable('proceso_nodo_dependencies')) {
+            Schema::create('proceso_nodo_dependencies', function (Blueprint $table) {
+                $table->id();
+                $table->foreignId('proceso_nodo_id')->constrained('proceso_nodos')->onDelete('cascade');
+                $table->foreignId('padre_proceso_nodo_id')->constrained('proceso_nodos')->onDelete('cascade');
+                $table->timestamps();
+                $table->unique(['proceso_nodo_id', 'padre_proceso_nodo_id']);
+            });
+        }
     }
 
     /**

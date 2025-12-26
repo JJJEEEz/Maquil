@@ -55,10 +55,6 @@ class TipoPrendaController extends Controller
 
         $tipoPrenda->update($validated);
 
-        if ($request->expectsJson()) {
-            return response()->json(['success' => true, 'tipoPrenda' => $tipoPrenda]);
-        }
-
         return redirect()->route('admin.tipos-prendas.index')
             ->with('success', 'Tipo de prenda actualizado correctamente');
     }

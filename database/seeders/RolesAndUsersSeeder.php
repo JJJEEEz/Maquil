@@ -18,7 +18,7 @@ class RolesAndUsersSeeder extends Seeder
         }
 
         // Define resources and actions
-        $resources = ['users', 'roles', 'ordenes', 'lotes'];
+        $resources = ['users', 'roles', 'ordenes', 'lotes', 'operador'];
         $actions = ['view', 'create', 'edit', 'delete'];
 
         $allPermissions = [];
@@ -30,10 +30,15 @@ class RolesAndUsersSeeder extends Seeder
             }
         }
 
+        // Permisos específicos para operador
+        Permission::firstOrCreate(['name' => 'operador.dashboard']);
+        Permission::firstOrCreate(['name' => 'operador.registrar']);
+        Permission::firstOrCreate(['name' => 'procesos.registrar']);
+
         // Assign permissions to roles
         $adminRole = Role::where('name', 'admin')->first();
         if ($adminRole) {
-            $adminRole->syncPermissions($allPermissions);
+            $adminRole->syncPermissions(Permission::all());
         }
 
         // Supervisor: manage ordenes and lotes
@@ -46,11 +51,13 @@ class RolesAndUsersSeeder extends Seeder
             $supervisorRole->syncPermissions($supervisorPerms);
         }
 
-        // Operador: limited to lotes view/create/edit
+        // Operador: limited to viewing dashboard and registering progress
         $operadorRole = Role::where('name', 'operador')->first();
         if ($operadorRole) {
             $operadorPerms = Permission::whereIn('name', [
-                'lotes.view','lotes.create','lotes.edit',
+                'operador.dashboard',
+                'operador.registrar',
+                'procesos.registrar',
             ])->get();
             $operadorRole->syncPermissions($operadorPerms);
         }

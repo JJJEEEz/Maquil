@@ -49,6 +49,8 @@ class OrdenController extends Controller
      */
     public function create()
     {
+        $tiposPrendas = \App\Models\TipoPrenda::all();
+        
         $authPermissions = [];
         if (auth()->check()) {
             $userId = auth()->user()->getKey();
@@ -67,6 +69,7 @@ class OrdenController extends Controller
         }
         return Inertia::render('Admin/Ordenes/Form', [
             'orden' => null,
+            'tiposPrendas' => $tiposPrendas,
             'authPermissions' => $authPermissions,
         ]);
     }
@@ -84,6 +87,7 @@ class OrdenController extends Controller
             'status' => 'nullable|string|in:' . implode(',', Orden::statuses()),
             'target_quantity' => 'nullable|integer|min:0',
             'target_date' => 'nullable|date|after_or_equal:today',
+            'tipo_prenda_id' => 'nullable|integer|exists:tipos_prendas,id',
             'lotes' => 'nullable|array',
             'lotes.*.started_at' => 'nullable|date',
             'lotes.*.ended_at' => 'nullable|date|after_or_equal:lotes.*.started_at',
@@ -98,6 +102,7 @@ class OrdenController extends Controller
             'status' => $data['status'] ?? Orden::STATUS_PENDING,
             'target_quantity' => $data['target_quantity'] ?? 0,
             'target_date' => $data['target_date'] ?? null,
+            'tipo_prenda_id' => $data['tipo_prenda_id'] ?? null,
         ]);
 
         // Create nested lotes if provided
@@ -148,6 +153,8 @@ class OrdenController extends Controller
      */
     public function edit(Orden $orden)
     {
+        $tiposPrendas = \App\Models\TipoPrenda::all();
+        
         $authPermissions = [];
         if (auth()->check()) {
             $authPermissions = auth()->user()->getPermissionNames()->toArray();
@@ -155,6 +162,7 @@ class OrdenController extends Controller
 
         return Inertia::render('Admin/Ordenes/Form', [
             'orden' => $orden,
+            'tiposPrendas' => $tiposPrendas,
             'authPermissions' => $authPermissions,
         ]);
     }
@@ -172,6 +180,7 @@ class OrdenController extends Controller
             'status' => 'nullable|string|in:' . implode(',', Orden::statuses()),
             'target_quantity' => 'nullable|integer|min:0',
             'target_date' => 'nullable|date|after_or_equal:today',
+            'tipo_prenda_id' => 'nullable|integer|exists:tipos_prendas,id',
             'lotes' => 'nullable|array',
             'lotes.*.id' => 'nullable|integer|exists:lotes,id',
             'lotes.*.started_at' => 'nullable|date',
@@ -186,6 +195,7 @@ class OrdenController extends Controller
         $orden->status = $data['status'] ?? $orden->status;
         $orden->target_quantity = $data['target_quantity'] ?? $orden->target_quantity;
         $orden->target_date = $data['target_date'] ?? $orden->target_date;
+        $orden->tipo_prenda_id = $data['tipo_prenda_id'] ?? $orden->tipo_prenda_id;
         $orden->save();
 
         // Upsert nested lotes: update if id present, otherwise create
