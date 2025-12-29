@@ -45,8 +45,10 @@ COPY --from=composer /app/vendor ./vendor
 # Copy built assets
 COPY --from=assets /app/public/build ./public/build
 
-# NGINX config for Laravel
-COPY docker/nginx.conf /etc/nginx/conf.d/default.conf
+# NGINX config for Laravel - overwrite default sites
+RUN rm -f /etc/nginx/sites-enabled/default /etc/nginx/sites-available/default
+COPY docker/nginx.conf /etc/nginx/sites-available/default
+RUN ln -s /etc/nginx/sites-available/default /etc/nginx/sites-enabled/default
 
 # Permissions for storage and cache
 RUN chown -R www-data:www-data storage bootstrap/cache \
@@ -55,6 +57,13 @@ RUN chown -R www-data:www-data storage bootstrap/cache \
 # Cache configs for production
 RUN php artisan config:cache \
     && php artisan route:cache
+
+# Set environment to production
+ENV APP_ENV=production
+ENV SKIP_COMPOSER=1
+ENV WEBROOT=/var/www/html/public
+ENV PHP_ERRORS_STDERR=1
+ENV RUN_SCRIPTS=0
 
 EXPOSE 80
 # Image provides startup script
