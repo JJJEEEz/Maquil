@@ -35,28 +35,29 @@ class ProcessesPermissionsSeeder extends Seeder
             Permission::firstOrCreate(['name' => $permission]);
         }
 
-        // Assign permissions to roles
+        // Assign permissions to roles (using syncPermissions is idempotent)
         $adminRole = Role::where('name', 'admin')->first();
-        $operadorRole = Role::where('name', 'operador')->first();
-        $supervisorRole = Role::where('name', 'supervisor')->first();
-
         if ($adminRole) {
-            $adminRole->givePermissionTo(Permission::all());
+            $adminRole->syncPermissions(Permission::all());
         }
 
+        $operadorRole = Role::where('name', 'operador')->first();
         if ($operadorRole) {
-            $operadorRole->givePermissionTo([
+            $operadorPerms = Permission::whereIn('name', [
                 'procesos.registrar',
                 'procesos.view',
-            ]);
+            ])->get();
+            $operadorRole->syncPermissions($operadorPerms);
         }
 
+        $supervisorRole = Role::where('name', 'supervisor')->first();
         if ($supervisorRole) {
-            $supervisorRole->givePermissionTo([
+            $supervisorPerms = Permission::whereIn('name', [
                 'procesos.registrar',
                 'procesos.view',
                 'tipos_prendas.view',
-            ]);
+            ])->get();
+            $supervisorRole->syncPermissions($supervisorPerms);
         }
     }
 }
