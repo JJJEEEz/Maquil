@@ -17,6 +17,14 @@ php artisan view:clear || true
 php artisan config:cache
 php artisan route:cache
 
+# Run migrations (--force needed in production)
+echo "Running database migrations..."
+php artisan migrate --force
+
+# Run seeders
+echo "Running database seeders..."
+php artisan db:seed --force
+
 # Ensure permissions
 chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
 
