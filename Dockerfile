@@ -54,9 +54,9 @@ RUN ln -s /etc/nginx/sites-available/default /etc/nginx/sites-enabled/default
 RUN chown -R www-data:www-data storage bootstrap/cache \
     && chmod -R 775 storage bootstrap/cache
 
-# Cache configs for production
-RUN php artisan config:cache \
-    && php artisan route:cache
+# Copy and setup custom entrypoint
+COPY docker/entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
 
 # Set environment to production
 ENV APP_ENV=production
@@ -64,7 +64,8 @@ ENV SKIP_COMPOSER=1
 ENV WEBROOT=/var/www/html/public
 ENV PHP_ERRORS_STDERR=1
 ENV RUN_SCRIPTS=0
+ENV PHP_MEMORY_LIMIT=512M
 
 EXPOSE 80
-# Image provides startup script
-CMD ["/start.sh"]
+# Use custom entrypoint that caches at runtime
+CMD ["/entrypoint.sh"]
