@@ -62,7 +62,14 @@ RUN rm -f /etc/nginx/sites-enabled/default \
 # Permissions for Laravel
 RUN chown -R nginx:nginx /var/www/html \
     && chmod -R 755 /var/www/html/storage \
-    && chmod -R 755 /var/www/html/bootstrap/cache
+    && chmod -R 755 /var/www/html/bootstrap/cache \
+    && mkdir -p /var/www/html/bootstrap/cache \
+    && mkdir -p /var/www/html/storage/logs \
+    && mkdir -p /var/www/html/storage/framework/cache \
+    && mkdir -p /var/www/html/storage/framework/views \
+    && mkdir -p /var/www/html/storage/framework/sessions \
+    && chmod -R 777 /var/www/html/storage \
+    && chmod -R 777 /var/www/html/bootstrap/cache
 
 # Copy and setup custom entrypoint
 COPY docker/entrypoint.sh /entrypoint.sh
