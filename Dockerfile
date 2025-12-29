@@ -54,8 +54,7 @@ RUN chown -R www-data:www-data storage bootstrap/cache \
 
 # Cache configs for production
 RUN php artisan config:cache \
-    && php artisan route:cache \
-    && php artisan view:cache
+    && php artisan route:cache
 
 EXPOSE 80
 # Image provides startup script
