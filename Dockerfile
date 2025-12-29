@@ -20,8 +20,8 @@ WORKDIR /app
 COPY package.json package-lock.json* ./
 RUN npm ci || npm i
 
-# Copy vendor (for Ziggy and other PHP packages referenced in JS)
-COPY vendor vendor
+# Copy vendor from composer stage (for Ziggy and other PHP packages referenced in JS)
+COPY --from=composer /app/vendor vendor
 
 # Copy only what Vite needs and build
 COPY resources resources
